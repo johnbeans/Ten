@@ -28,9 +28,11 @@ It is a formal algebra whose messages can be composed, projected, filtered, sort
 ## Documentation
 
 - **[TEN-SPEC.md](TEN-SPEC.md)** — The founding specification. Start here.
+- **[ROADMAP.md](ROADMAP.md)** — Implementation plan. The Ten MCP server is the primary deliverable.
 
 ## Status
 
+Ten is in the **founding specification** stage. The next milestone is a reference MCP server that lets any MCP-compatible AI (Claude, GPT, Gemini, and others) speak Ten through tool calls — no native model support required. The algebra is being formalized, the kernel types are under investigation, and we're seeking collaborators who think about formal languages, information theory, abstract algebra, distributed systems, and mechanism design.
 Ten is in the **founding specification** stage. The algebra is being formalized, the kernel types are under investigation, and we're seeking collaborators who think about formal languages, information theory, abstract algebra, and distributed systems.
 
 ### Open Research Problems

@@ -357,11 +357,15 @@ The value proposition is concrete: where these protocols currently carry JSON pa
 
 ### For AI Developers
 
-The reference implementation (forthcoming) will provide:
-- A Ten encoder/decoder library
-- A minimal Rosetta Stone server
-- Example integrations showing Ten payloads inside MCP and A2A messages
-- Benchmarks comparing Ten encoding vs. JSON/natural language for common agent communication patterns
+
+**The fastest path:** Install the Ten MCP server (forthcoming). Any AI that supports MCP — Claude, GPT, Gemini, and others — can speak Ten immediately through tool calls like `ten.encode()`, `ten.decode()`, `ten.filter()`, and `ten.compose()`. No native model support or custom integration required.
+
+The reference implementation will provide:
+- A **Ten MCP server** — the primary integration point for any MCP-compatible AI
+- A **Ten REST API** — for non-MCP systems and direct programmatic access
+- A **Python library** (`tenlang`) — the core encoder/decoder/algebra engine
+- A **minimal Rosetta Stone server** — the living registry for vocabulary and canonicalization
+- **Benchmarks** comparing Ten encoding vs. JSON/natural language for common agent communication patterns
 
 ### For Researchers
 
@@ -446,7 +450,18 @@ We intend to be our own toughest critics. The following are real structural gaps
 
 **The critique:** Current LLMs emit token sequences, not algebraic structures. There is a massive gap between "Ten is the optimal encoding" and "an LLM can actually generate a well-formed Ten message." You need either a compilation layer (natural language → Ten) or models trained specifically on Ten. Either way, this is a cold start problem — who adopts it first, and why?
 
-**Status:** This is the critical adoption challenge. Our near-term approach is a translation layer: a lightweight encoder/decoder that sits between an LLM's natural language output and the Ten wire format. The AI doesn't need to "think in Ten" any more than a web server needs to "think in TCP." Over time, as Ten proves its efficiency advantages, there may be incentive to train models that operate on Ten natively — but that's a long-horizon goal, not a prerequisite. The cold start problem is addressed by targeting a specific high-value use case first (likely multi-agent orchestration within a single platform) rather than trying to boil the ocean.
+
+**Status: Solved — Ten ships as an MCP server.** MCP (Model Context Protocol) is already the universal plugin standard supported by Claude, GPT, Gemini, and the broader AI ecosystem. If Ten is distributed as an MCP server, then any AI that can use MCP tools can speak Ten *today* — no native model support required, no platform-specific integration, no custom SDK.
+
+The AI calls tool functions like `ten.encode()`, `ten.decode()`, `ten.filter()`, `ten.compose()`, and `ten.verify()` as MCP tool calls. The MCP server handles all the algebra internally. The adoption path becomes: install one MCP server, and your AI speaks Ten.
+
+This creates a natural maturity progression:
+
+- *Phase 1 (MCP tools):* AIs interact with Ten through natural-language MCP tool calls — "encode this message with urgency 8 and high privacy." The MCP server translates to and from Ten's algebraic representation.
+- *Phase 2 (learned patterns):* Through repeated use, AIs learn to make more precise, structured tool calls that map more directly to Ten's algebra, reducing translation overhead.
+- *Phase 3 (native generation):* Models trained on enough Ten interactions begin generating Ten expressions directly, bypassing the MCP translation layer entirely. This is an optimization, not a prerequisite.
+
+The cold start problem is addressed concretely: the Ten project ships a reference MCP server and a reference REST API. Day one, any MCP-compatible AI can speak Ten. The MCP server is the Trojan horse — the same distribution mechanism that made MCP itself successful becomes Ten's adoption vehicle.
 
 ### B.9 Rosetta Stone Centralization
 
