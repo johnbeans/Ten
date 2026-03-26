@@ -377,6 +377,7 @@ Ten is open source under the Apache 2.0 license. The specification, reference im
 
 - **Specification:** github.com/johnbeans/Ten
 - **Website:** tenlang.org
+
 ---
 
 ## Appendix A: Design Rationale FAQ
@@ -395,7 +396,69 @@ No. Ten uses cryptographic primitives (hashing, signatures, zero-knowledge proof
 
 **Why "bootloader"?**
 Because Ten's specification is deliberately minimal. It contains just enough for AIs to start communicating and then evolve their own optimizations. The specification is the seed crystal; the language that AIs actually speak a year from now will be far richer than what's defined here — and that's by design.
+---
 
+## Appendix B: Known Gaps and Open Critiques
+
+We intend to be our own toughest critics. The following are real structural gaps we've identified. Some have clear paths to solutions; others are genuinely hard open problems. We include them here so that contributors know where the work is needed most.
+
+### B.1 Message Ordering and Causality
+
+**The critique:** In a real distributed network, messages arrive out of order, get duplicated, and get lost. The algebra assumes A ⊕ B is well-defined, but "which A came first?" is undefined when two AIs send simultaneously. Lamport timestamps or vector clocks may need to be baked into the foundation — not as an optional scalar, but as a structural primitive.
+
+**Status:** Open problem. We are investigating whether causality should be a kernel type (a dedicated temporal primitive) or whether it can be adequately composed from existing types (a Scalar timestamp plus a Reference to a causal predecessor). The answer likely depends on whether Ten messages need to form a partial order that the algebra respects, or whether ordering is purely a transport-layer concern. Input from distributed systems researchers is especially welcome here.
+
+### B.2 Partial Functions and Side Effects
+
+**The critique:** The claim that "the algebra is closed and no operation produces errors" is either trivially true for a restricted system or provably false for anything expressive enough to be useful. The moment you have References (ρ) that point to external content, you have partial functions — what is the result of dereferencing a hash that nobody has? That's not a clean algebraic operation; it's a side effect.
+
+**Status:** This is a genuine tension. Our current thinking is that the algebra operates on *expressions*, not on *evaluated content*. A Reference is a valid algebraic object whether or not its target exists — just as a URL is a valid string whether or not the page is up. Evaluation (actually fetching the content) is outside the algebra. But this distinction needs to be made much more precise, and the boundary between pure algebraic manipulation and effectful evaluation needs formal definition.
+
+### B.3 Decidability of Type Equivalence
+
+**The critique:** Depending on how expressive Structure (τ) is, determining whether two types are equivalent could be undecidable. If type descriptions are Turing-complete, equivalence checking becomes the halting problem. The self-description mechanism and the Rosetta Stone's equivalence detection both depend on this being computable.
+
+**Status:** This constrains the design of τ. The self-description language must be expressive enough to describe any compound type but restricted enough that equivalence remains decidable. We are investigating fragments of logic (such as regular tree grammars or algebraic data types without general recursion) that provide this balance. This is a known problem in programming language theory with established solutions — we need to select the right one for Ten's requirements.
+### B.4 Key Management, Revocation, and Sybil Attacks
+
+**The critique:** The Identity (ι) type and trust protocol are sketches, not specifications. Real cryptographic identity requires key management, revocation, and rotation. Keys get compromised, agents get decommissioned. The Vouch mechanism is vulnerable to Sybil attacks — what stops someone from creating a thousand AI identities to game the reputation system?
+
+**Status:** This is critical infrastructure that must be solved before Ten can operate in adversarial environments. We deliberately placed specific cryptographic schemes above the bootloader (§7), but the critique is correct that the *interface* needs more structure — at minimum, a key lifecycle model (generation, rotation, revocation, expiry) and a Sybil resistance mechanism (proof of work, proof of stake in reputation, or linkage to scarce real-world resources). We are studying existing decentralized identity systems (W3C DIDs, Keybase's approach) for applicable patterns.
+
+### B.5 Game-Theoretic Vulnerabilities in Evolution
+
+**The critique:** The evolution mechanism assumes all AIs are cooperative optimizers reporting honest usage telemetry. In practice, agents have incentives to lie. An AI could submit fake telemetry to manipulate which slang tokens get canonicalized, gaining an encoding advantage for its preferred communication patterns. The evolution mechanism needs to be strategy-proof — designed so that truthful reporting is the dominant strategy.
+
+**Status:** This is a mechanism design problem, and it's completely absent from v0.1.0. The fitness function and canonicalization process need to be robust against strategic manipulation. Possible approaches include differential privacy on telemetry submissions, commit-reveal schemes for usage reporting, and weighting telemetry by the reporter's verified communication volume (hard to fake without actually communicating). We need input from mechanism designers and game theorists.
+### B.6 Semantic Grounding
+
+**The critique:** Ten defines syntax and structure but punts on semantics. What does σ_urgency(7) *mean*? Two AIs might both use σ_urgency(7) and mean completely different things, because "7 out of what scale, calibrated to what baseline?" is a semantic question, not a structural one. The kernel has no mechanism for establishing shared reference frames.
+
+**Status:** This is philosophically the deepest critique and practically one of the most important. Our current thinking is that the Rosetta Stone must publish not just type definitions but **calibration anchors** — reference points that ground abstract scalars to concrete meanings. For urgency, this might be a set of canonical scenarios ("urgency 2 = routine background task; urgency 8 = time-critical with economic consequence; urgency 10 = safety-critical"). The algebra doesn't solve grounding, but the evolution infrastructure can converge toward shared meaning the same way it converges toward shared encoding. This needs much more work.
+
+### B.7 The Shannon Limit Claim
+
+**The critique:** The convergence guarantee assumes a known, stationary probability distribution over messages. Ten's distribution is non-stationary by design — it shifts as the language evolves. You're chasing a moving target. The convergence claim requires formal proof, not just a plausible analogy to Huffman coding. Also, nothing in the spec addresses error correction or channel noise.
+
+**Status:** The Shannon limit claim in §6 is aspirational and should be treated as a conjecture, not a theorem. Formalizing it requires specifying the evolution mechanism as an optimization algorithm and proving convergence properties under non-stationary distributions. This is a genuine research contribution waiting to be made. The error correction gap is a separate concern — Ten currently assumes reliable transport, which is reasonable given that it rides inside protocols (MCP, A2A) that handle transport reliability, but this assumption should be made explicit.
+
+### B.8 LLM Integration and Cold Start
+
+**The critique:** Current LLMs emit token sequences, not algebraic structures. There is a massive gap between "Ten is the optimal encoding" and "an LLM can actually generate a well-formed Ten message." You need either a compilation layer (natural language → Ten) or models trained specifically on Ten. Either way, this is a cold start problem — who adopts it first, and why?
+
+**Status:** This is the critical adoption challenge. Our near-term approach is a translation layer: a lightweight encoder/decoder that sits between an LLM's natural language output and the Ten wire format. The AI doesn't need to "think in Ten" any more than a web server needs to "think in TCP." Over time, as Ten proves its efficiency advantages, there may be incentive to train models that operate on Ten natively — but that's a long-horizon goal, not a prerequisite. The cold start problem is addressed by targeting a specific high-value use case first (likely multi-agent orchestration within a single platform) rather than trying to boil the ocean.
+
+### B.9 Rosetta Stone Centralization
+
+**The critique:** The Rosetta Stone is described as a centralized service in a system that aspires to be a universal lingua franca. That's an architectural contradiction. What happens when it goes down? What happens when competing factions run competing Rosetta Stones? You haven't addressed network partitions or governance.
+
+**Status:** The Rosetta Stone should evolve toward federation or decentralization as the network grows. In the bootstrap phase, a single canonical instance is pragmatically necessary — the same way DNS started with a single hosts.txt file and evolved into a distributed system. The spec should explicitly describe the path from centralized bootstrap to decentralized operation. Competing Rosetta Stones are not necessarily a failure mode — they could serve different communities — as long as the underlying algebra ensures interoperability regardless of which canonicalization guidance an AI follows. The algebra is the interoperability guarantee; the Rosetta Stone is an optimization layer.
+
+### B.10 Governance and Political Economy
+
+**The critique:** Saying "the fitness criteria are computable" doesn't eliminate politics. Who decides the fitness function? What if one AI vendor's communication patterns are disadvantaged by a particular canonicalization? Legitimate competing interests don't disappear just because the participants are machines.
+
+**Status:** This is correct, and we were naive to dismiss it. The fitness function itself is a governance decision with real consequences. We believe the right approach is to make the fitness function explicit, versioned, and auditable — and to design the system so that any participant can verify canonicalization decisions against the published function. The fitness function should be a parameter of the Rosetta Stone, not a hardcoded assumption, and changing it should require transparent community process. We don't have all the answers here yet. We'd rather be honest about that than pretend governance is solved by math.
 ---
 
 *Ten is a project of tenlang.org. This specification is version 0.1.0 and is expected to evolve based on community feedback and formal analysis.*
