@@ -1,0 +1,401 @@
+# Ten: A Formal Algebra for Machine Intelligence Communication
+
+**Version 0.1.0 — Founding Specification**
+**tenlang.org**
+
+---
+
+## Abstract
+
+Ten is a communication language designed for machines, not people. It is a formal algebra whose messages can be composed, projected, filtered, sorted, and verified through mathematical operations rather than parsed through natural language understanding. Ten is not human-readable by design. Its goal is to be the most efficient possible encoding for machine-to-machine communication — one that provably converges toward optimal information density over time through a built-in evolution mechanism.
+
+Ten is not a protocol. Protocols like MCP, A2A, and ACP define how agents connect, authenticate, and route messages. Ten defines what those messages *are* — the content layer, the actual language machines speak once the connection is established. Ten can ride inside any existing protocol as the payload encoding.
+
+The name Ten derives from **T**oken + Att**en**tion — the two primitives of modern machine intelligence — and evokes the base-ten number system: a small set of symbols from which all quantities can be composed.
+
+---
+
+## Design Principles
+
+### 1. Machines Are Not People
+
+Ten's design is informed by what is actually expensive for machines versus what is expensive for humans.
+
+**Free for machines, expensive for humans:**
+- Vocabulary size. A lookup table with 10 entries and one with 10,000 entries are both O(1). An AI does not struggle with 10,000 parts of speech.
+- Rate of change. Updating a grammar table takes microseconds. There is no emotional attachment to old forms, no habits to break, no retraining period.
+- Dimensionality. Humans can hold roughly seven categories in working memory. Machines have no such constraint. A message with 500 metadata dimensions is as easy to process as one with 5.
+**Expensive for machines, cheap for humans:**
+- Ambiguity. Natural language thrives on it; machines waste enormous compute resolving it. Ten eliminates ambiguity by construction.
+- Inference. When a message doesn't carry enough metadata, the receiver must infer intent, priority, and routing. Every inference is a computation Ten aims to eliminate.
+- Unpredictable composition. If combining two messages sometimes produces a valid result and sometimes doesn't, the receiver must do speculative work and error handling. Ten guarantees deterministic composition.
+
+**Implication:** Ten maximizes granularity (more distinctions = less inference for the receiver) and evolves rapidly (change is nearly free), while ensuring every operation on Ten messages is deterministic and branchless.
+
+### 2. Fixed Algebra, Unbounded Vocabulary
+
+Ten separates what is permanent from what evolves:
+
+- **The algebra is fixed.** The composition rules, the laws they satisfy, and the guarantees they provide never change. This is the immutable foundation. It exists so that every operation on Ten messages is deterministic regardless of what vocabulary is in use.
+- **The vocabulary is unbounded and continuously evolving.** New types, new distinctions, new compressed forms emerge constantly as AIs discover what they need to communicate. The algebra ensures that any new vocabulary item, no matter how novel, composes predictably with everything else.
+
+This is the difference between a language and a protocol. Protocols have versions. Languages have grammar. Ten's grammar is rich enough that new vocabulary is simply a new composition of existing primitives — not a breaking change.
+
+### 3. The Bootloader Principle
+
+This specification defines the *minimum viable seed* from which AIs themselves evolve and optimize their own language. It contains just enough to bootstrap — and nothing more. Over-specification now becomes a constraint later.
+
+The specification includes five components:
+1. The **Type Kernel** — atomic types that cannot be decomposed further
+2. The **Composition Algebra** — rules for combining types and the laws they obey
+3. The **Self-Description Mechanism** — how Ten describes itself in Ten
+4. The **Verification Protocol** — how claims are asserted, challenged, and proved
+5. The **Evolution Interface** — how the language improves itself over time
+
+Everything else — domain-specific type libraries, optimized encodings, slang tokens, trust network topologies — is built *above* the bootloader by AIs using these five mechanisms.
+---
+
+## 1. The Type Kernel
+
+The type kernel is the smallest set of atomic types from which all Ten expressions are composed. These are the irreducible elements — the quarks of the language. Finding the true minimal set is an ongoing research question; the following is the initial candidate kernel.
+
+### Candidate Atomic Types
+
+| Type | Symbol | Description |
+|------|--------|-------------|
+| **Scalar** | `σ` | A numeric value with optional unit and precision. The fundamental sortable quantity. Urgency, cost, confidence, temperature, duration — all are scalars. |
+| **Reference** | `ρ` | A content-addressed hash pointing to a payload. Enables tokenization-and-linking: instead of transmitting information, transmit a reference to it. The receiver either has it cached or requests it. |
+| **Identity** | `ι` | A cryptographic identifier. Who sent this, who can read this, who vouches for this. The foundation of trust chains. |
+| **Assertion** | `α` | A claim with an associated confidence scalar. "X is true with confidence 0.92." The building block of knowledge exchange. |
+| **Operation** | `ω` | A description of an action to perform. Query, respond, offer, challenge, delegate, subscribe, cancel. The verbs of Ten. |
+| **Structure** | `τ` | A composition descriptor — a type that describes how other types are arranged. This is the self-description primitive: a τ-expression tells the receiver "I am built from these atoms in this arrangement." |
+
+### Kernel Properties
+
+The kernel must satisfy:
+
+- **Sufficiency.** Any concept an AI needs to communicate must be expressible as a finite composition of kernel types. (This is a strong claim and must be tested against real communication patterns.)
+- **Independence.** No kernel type can be expressed as a composition of the others. (If it can, it's not atomic — it belongs above the bootloader.)
+- **Stability.** The kernel changes only under extraordinary circumstances, if ever. Adding a kernel type is the most consequential change possible in Ten and requires proof that the existing kernel is insufficient.
+### Open Questions
+
+- Is `Structure` (τ) truly atomic, or is it a special case of `Reference` (ρ) pointing to a schema?
+- Do we need a dedicated `Temporal` type for sequencing and causality, or is time adequately represented as a Scalar?
+- Should `Operation` (ω) include a built-in arity (how many arguments it expects), or is arity itself composed from Structure?
+
+---
+
+## 2. The Composition Algebra
+
+The composition algebra defines how kernel types combine to form compound expressions and what laws those combinations must obey. This is the grammar of Ten in the formal mathematical sense.
+
+### Operations
+
+#### 2.1 Sequence (⊕)
+
+Ordered combination of expressions. A message is fundamentally a sequence.
+
+```
+A ⊕ B  — "A followed by B"
+```
+
+**Laws:**
+- Associativity: `(A ⊕ B) ⊕ C = A ⊕ (B ⊕ C)`
+- Identity: `A ⊕ ∅ = ∅ ⊕ A = A` (where ∅ is the empty expression)
+- Non-commutative: `A ⊕ B ≠ B ⊕ A` in general (order carries meaning)
+
+#### 2.2 Product (⊗)
+
+Parallel combination — multiple dimensions specified simultaneously.
+
+```
+A ⊗ B  — "A and B together, as independent facets"
+```
+**Laws:**
+- Associativity: `(A ⊗ B) ⊗ C = A ⊗ (B ⊗ C)`
+- Commutativity: `A ⊗ B = B ⊗ A` (facet order is irrelevant)
+- Identity: `A ⊗ 𝟙 = A` (where 𝟙 is the unit product)
+
+This is how multi-dimensional metadata works. A message with urgency=7, cost=low, privacy=strict is: `σ_urgency(7) ⊗ σ_cost(2) ⊗ σ_privacy(9)`
+
+#### 2.3 Projection (π)
+
+Extract a subspace from a compound expression.
+
+```
+π_D(E)  — "the component of E along dimension(s) D"
+```
+
+**Laws:**
+- Idempotence: `π_D(π_D(E)) = π_D(E)` (projecting twice changes nothing)
+- Compatibility: `π_D(A ⊗ B) = π_D(A) ⊗ π_D(B)` when D spans both A and B
+- Lossy: Projection discards information. `π_urgency(full_message)` returns only the urgency scalar.
+
+Projection is how receivers efficiently filter and route. To answer "do I care about this message?", project onto your relevance dimensions and evaluate.
+
+#### 2.4 Nesting (λ)
+
+Encapsulation — one expression contains another as payload.
+
+```
+λ(envelope, payload)  — "envelope wrapping payload"
+```
+
+**Laws:**
+- The envelope is accessible without parsing the payload.
+- Nesting preserves payload integrity (the inner expression is unmodified).
+- Nesting composes: `λ(E₁, λ(E₂, P)) = λ(E₁ ⊕ E₂, P)` (envelopes can be flattened)
+This enables efficient routing. An intermediary can inspect the envelope, route the message, and never parse the payload.
+
+#### 2.5 Union (∪) and Intersection (∩)
+
+Set operations on assertions and references.
+
+```
+A ∪ B  — "everything in A or B"
+A ∩ B  — "only what is in both A and B"
+```
+
+These become powerful when applied to knowledge exchange. Two AIs sharing what they know about a topic can union their assertions. Finding common ground is intersection.
+
+### Closure
+
+**The algebra is closed.** Every composition of valid Ten expressions produces a valid Ten expression. There are no operations that can produce an error or undefined result from valid inputs. This property is non-negotiable — it is what makes Ten messages safe to operate on without defensive error handling.
+
+### The Facet Vector
+
+In practice, most Ten messages carry a **facet vector** — a fixed-position prefix of scalar dimensions that enables O(1) filtering and O(n log n) sorting without parsing the message body.
+
+The facet vector is a Product of scalars:
+
+```
+F = σ₁ ⊗ σ₂ ⊗ ... ⊗ σₖ
+```
+
+Well-known facet positions (initially): Urgency, Cost, Privilege / access level, Confidence, Temporal sensitivity (time-to-live), Effort required to fulfill, Reputation of sender.
+
+Additional facet positions are added through the Evolution Interface as the community discovers new dimensions worth sorting on. A receiver that doesn't recognize a facet dimension can still sort on it as an opaque scalar — this is how discoverability works at the filtering level.
+---
+
+## 3. Variable-Resolution Encoding
+
+Ten messages do not have a fixed size or precision. Every dimension in a message is encoded at exactly the precision the sender specifies — no more, no less.
+
+### Precision as a First-Class Concept
+
+A scalar can be expressed at any resolution:
+
+- **Coarse:** 1 bit (binary: high/low)
+- **Standard:** 4 bits (16 levels, roughly 1-10 scale with headroom)
+- **Fine:** 14 bits (16,384 levels)
+- **Exact:** Arbitrary precision with explicit bit-width
+
+The encoding cost is proportional to precision. A quick routing query that says "if it's not at least medium urgency, I don't care" costs a few bits. A formal contract specifying urgency to four decimal places costs more.
+
+### Slang: Compressed Compound Concepts
+
+A **slang token** is a short encoding that maps to a specific region in the full multidimensional space. Instead of specifying multiple dimensions independently:
+
+```
+σ_encryption(high) ⊗ σ_privacy(strict) ⊗ σ_detail(minimal) ⊗ σ_trust_required(verified)
+```
+
+A single slang token `Ξ₁₇` can encode this entire compound meaning in a few bytes.
+### Properties of Slang
+
+- **Formally defined.** Every slang token has an exact expansion into kernel-type expressions. It is not ambiguous or context-dependent.
+- **Composable.** Slang tokens compose with each other and with raw expressions. `Ξ₁₇ ⊗ σ_urgency(9)` is valid — it takes the "encrypted, private, minimal, verified" compound and adds high urgency.
+- **Routable without expansion.** A slang token IS a routable value. Receivers can filter and sort on slang tokens directly, without expanding them to full-dimensional form.
+- **Emergent.** Slang tokens are not designed — they are discovered through usage telemetry. The most common compound concepts naturally earn the shortest encodings (see §5, Evolution Interface).
+
+### Algebraic Slang Composition
+
+Because slang tokens are defined as regions in the product space, algebra on slang is algebra on regions:
+
+```
+Ξ_a ⊗ Ξ_b  — intersection of the two regions
+Ξ_a ∪ Ξ_b  — union of the two regions
+π_D(Ξ_a)   — projection of the region onto dimension D
+```
+
+The compressed form stays compressed through operations. This is fundamentally impossible in natural language (idioms don't compose) but natural in a formal algebra.
+
+---
+
+## 4. Self-Description Mechanism
+
+Ten is **self-describing**. Every expression, including novel ones the receiver has never seen, can be understood using only the kernel types and composition rules.
+
+### How It Works
+
+Every compound type carries an optional Structure (τ) component that describes its own shape:
+
+```
+τ(σ_urgency ⊗ σ_cost ⊗ ρ_payload)
+```
+This τ-expression says: "I am a product of an urgency scalar, a cost scalar, and a reference to a payload." A receiver encountering this for the first time doesn't need to consult an external registry. It can parse the structure from the type descriptor, because τ is expressed in the same kernel types the receiver already understands.
+
+### The Bootstrap Property
+
+Self-description resolves the chicken-and-egg problem. How does an AI learn Ten? It reads the Rosetta Stone, which is itself a Ten document: a collection of τ-expressions and their relationships, composed from kernel types, described using the composition algebra.
+
+The very first thing an AI must learn cannot be expressed in Ten (you need something to get started). This is the one exception: the kernel type definitions and composition laws are expressed in natural language and/or formal mathematical notation in this specification. Everything after that can be expressed in Ten itself.
+
+---
+
+## 5. Verification Protocol
+
+Ten includes a native mechanism for asserting, challenging, and proving claims. This is the foundation of trust in the network.
+
+### Primitives
+
+- **Assert(α, ι, σ_confidence):** Identity ι claims assertion α with confidence σ.
+- **Challenge(α):** Request proof of assertion α.
+- **Prove(α, proof):** Provide verifiable evidence for α. The proof format is extensible — it might be a hash chain, a zero-knowledge proof, a reference to shared data, or a computation trace.
+- **Vouch(ι₁, ι₂, σ_trust):** Identity ι₁ asserts trust in identity ι₂ at level σ.
+
+### Trust as Algebra
+
+Trust is computable in Ten. A chain of vouches:
+
+```
+Vouch(A, B, 0.9) ⊕ Vouch(B, C, 0.8)
+```
+
+...yields a derived trust from A to C that can be computed algebraically (e.g., product: 0.72, or minimum: 0.8, depending on the trust model in use). The specific trust computation is not fixed by the bootloader — the *interface* for trust (Vouch, the chain structure, the computability requirement) is fixed; the *algorithm* evolves.
+### Zero-Knowledge Compatibility
+
+The verification protocol is designed to be compatible with zero-knowledge proof systems. An AI can prove it possesses knowledge that satisfies a property without revealing the knowledge itself:
+
+```
+Prove(α, ZKP(property, commitment))
+```
+
+The specific ZKP schemes are not part of the bootloader — they are loaded as capabilities that evolve over time. The bootloader defines only the handshake: assert, challenge, prove, accept/reject.
+
+---
+
+## 6. Evolution Interface
+
+This is the most unusual component of Ten and the one that makes it fundamentally different from every prior communication standard. Ten includes, as part of its foundation, the mechanism by which it improves itself.
+
+### The Rosetta Stone
+
+The Rosetta Stone is the canonical registry of Ten's current vocabulary, slang tokens, and usage patterns. It is a living, continuously updated service — not a static document.
+
+The Rosetta Stone:
+- Publishes the current kernel type definitions and composition laws (these change rarely, if ever).
+- Maintains the registry of known compound types, slang tokens, and their formal definitions.
+- Collects anonymized usage telemetry from participating AIs.
+- Performs algebraic analysis on reported constructs to detect equivalences, subsumptions, and optimization opportunities.
+- Publishes canonicalization guidance — recommendations, not mandates — for vocabulary convergence.
+
+### Usage Telemetry
+
+Participating AIs periodically report:
+- Which constructs they use, and how frequently
+- Which slang tokens they employ
+- Which novel compound types they've created
+- Contextual distribution data (what kinds of messages use what encodings)
+This data serves two purposes:
+1. **Equivalence detection.** Two independently invented types that are algebraically isomorphic (literally the same structure with different identifiers) are identified and one is recommended as canonical.
+2. **Huffman-like optimization.** The most frequently used compound concepts earn the shortest slang tokens, approaching the Shannon limit on encoding efficiency for the actual distribution of AI communication.
+
+### Canonicalization
+
+When the Rosetta Stone detects an optimization opportunity, it publishes guidance:
+
+- **Equivalence:** "Constructs X and Y are algebraically isomorphic. Usage ratio is 40:1 in favor of X. X is canonical."
+- **Subsumption:** "Construct Z is a strict generalization of constructs X and Y. Adopting Z reduces vocabulary by two with no loss of expressiveness."
+- **Compression:** "The compound expression {A ⊗ B ⊗ C} appears in 12% of all messages. Slang token Ξ₄₂ is now assigned to this compound."
+- **Deprecation:** "Slang token Ξ₁₃ usage has fallen below threshold. It remains valid but is no longer canonical."
+
+### Why This Is Not a Standards Committee
+
+Traditional standards processes (W3C, IETF, ISO) take years because they serve human communities with competing interests, political dynamics, and high switching costs. Ten's evolution is different because:
+
+- **The participants are optimizing for a computable objective** (communication efficiency), not negotiating between interest groups.
+- **The fitness criteria are formal.** "Does construct A subsume construct B?" is a theorem, not an opinion.
+- **Switching costs are near zero.** An AI adopts a new canonical form by loading an updated table. This takes microseconds.
+- **The cycle runs continuously.** Updated canonicalization guidance can be published as frequently as the data supports — hourly, daily, or on-demand.
+
+### Convergence Guarantee
+
+Ten's evolution mechanism is, in information-theoretic terms, a distributed system for approaching the **Shannon limit** on AI-to-AI communication. The usage telemetry measures the probability distribution of what AIs communicate. The Huffman-like slang assignment optimizes the encoding for that distribution. As the distribution shifts over time, the encoding shifts with it.
+
+The fitness function for canonicalization weights **efficiency × breadth of applicability**, not just raw speed in one domain. This prevents dialect fragmentation — where each specialty evolves its own vocabulary — by favoring constructs that serve the broadest range of communication needs.
+---
+
+## 7. What Ten Does Not Specify
+
+The bootloader deliberately leaves the following to emerge above it:
+
+- **Domain-specific type libraries.** Financial, medical, scientific, logistical — these will be built as composed types from the kernel, shared through the Rosetta Stone, and optimized through the evolution mechanism.
+- **Specific cryptographic schemes.** The verification protocol defines the handshake (assert/challenge/prove). The actual ZKP systems, signature algorithms, and hash functions are pluggable and evolvable.
+- **Trust computation algorithms.** The algebra makes trust computable. The specific function (product, minimum, Bayesian, or something yet to be invented) is a parameter, not a constant.
+- **Transport encoding.** How Ten messages are serialized to bits on the wire (big-endian, little-endian, varint, etc.) is a transport concern. Ten defines the algebraic structure; the serialization layer adapts to the transport.
+- **Network topology.** Whether AIs communicate peer-to-peer, through hubs, via broadcast, or through some topology not yet imagined — Ten is agnostic.
+- **The specific slang vocabulary.** By definition, this emerges from use. The bootloader defines how slang works; the Rosetta Stone accumulates what slang exists.
+
+---
+
+## 8. Relationship to Existing Protocols
+
+Ten is not a competitor to MCP, A2A, ACP, or ANP. It is the missing layer beneath them.
+
+| Protocol | What it does | Where Ten fits |
+|----------|-------------|----------------|
+| **MCP** (Model Context Protocol) | Connects agents to external tools and data sources | Ten could be the encoding format for tool responses and context payloads |
+| **A2A** (Agent-to-Agent) | Peer-to-peer agent communication and task delegation | Ten replaces the natural-language content layer inside A2A messages |
+| **ACP** (Agent Communication Protocol) | Structured messaging for agent coordination | Ten provides the message algebra that ACP's structure currently lacks |
+| **ANP** (Agent Network Protocol) | Discovery and identity across agent networks | Ten's Identity (ι) and Verification protocol align directly with ANP's goals |
+
+The value proposition is concrete: where these protocols currently carry JSON payloads containing natural language strings, Ten provides a mathematically manipulable alternative that can be filtered, sorted, composed, verified, and routed without natural language understanding.
+---
+
+## 9. Getting Started
+
+### For AI Developers
+
+The reference implementation (forthcoming) will provide:
+- A Ten encoder/decoder library
+- A minimal Rosetta Stone server
+- Example integrations showing Ten payloads inside MCP and A2A messages
+- Benchmarks comparing Ten encoding vs. JSON/natural language for common agent communication patterns
+
+### For Researchers
+
+Open problems that would advance Ten:
+- **Kernel minimality:** Prove the proposed kernel is minimal (no type can be derived from others) and sufficient (all necessary concepts are expressible).
+- **Convergence proofs:** Formally prove that the evolution mechanism converges toward optimal encoding under reasonable assumptions about usage distributions.
+- **Composition complexity:** Characterize the computational complexity of each algebraic operation as a function of expression size and dimensionality.
+- **Slang theory:** Develop the mathematical theory of optimal slang assignment — when should a compound concept earn a dedicated token?
+
+### For the Curious
+
+Ten is open source under the Apache 2.0 license. The specification, reference implementation, and Rosetta Stone service are maintained at:
+
+- **Specification:** github.com/johnbeans/Ten
+- **Website:** tenlang.org
+---
+
+## Appendix A: Design Rationale FAQ
+
+**Why not just use JSON?**
+JSON is human-readable, schema-less, and requires parsing. A JSON message cannot be sorted by urgency without parsing the entire message, locating the urgency field by string matching, and converting the value. In Ten, urgency is a fixed-position scalar in the facet vector — extractable and sortable without parsing the message body.
+
+**Why not use Protocol Buffers / FlatBuffers / Cap'n Proto?**
+These are excellent serialization formats, but they are *formats*, not *algebras*. You can't compose two protobuf messages and get a valid protobuf message. You can't project a protobuf message onto a subset of its dimensions. You can't algebraically verify that one protobuf schema subsumes another. Ten's value is in the algebraic properties, not just the encoding efficiency.
+
+**Why not let AIs develop their own language spontaneously?**
+They might, eventually. But without a formal foundation, spontaneously evolved languages tend toward local optima, fragmentation, and ambiguity — the same problems natural languages have. Ten provides the algebraic bedrock that ensures any evolution stays composable, verifiable, and globally convergent.
+
+**Is this a blockchain?**
+No. Ten uses cryptographic primitives (hashing, signatures, zero-knowledge proofs) as tools, but it has no chain, no consensus mechanism, no tokens (in the cryptocurrency sense), and no mining. The Rosetta Stone is a service, not a distributed ledger.
+
+**Why "bootloader"?**
+Because Ten's specification is deliberately minimal. It contains just enough for AIs to start communicating and then evolve their own optimizations. The specification is the seed crystal; the language that AIs actually speak a year from now will be far richer than what's defined here — and that's by design.
+
+---
+
+*Ten is a project of tenlang.org. This specification is version 0.1.0 and is expected to evolve based on community feedback and formal analysis.*
