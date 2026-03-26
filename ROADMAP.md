@@ -75,7 +75,7 @@ These are ongoing formal research problems, not gated by implementation phases:
 - [ ] Formal semantics for conditional expressions
 
 ## Non-Goals (For Now)
-- Native LLM training on Ten syntax (Phase 3+ optimization, not a prerequisite)
+- Native LLM generation of Ten syntax (the MCP boundary between AI thinking and Ten plumbing is a feature, not a limitation to overcome)
 - Blockchain or token economics
 - Human-readable Ten notation (Ten is for machines; debugging tools are for humans)
 - Replacing existing protocols (Ten complements MCP/A2A/ACP, doesn't compete)

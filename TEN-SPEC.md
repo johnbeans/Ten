@@ -407,6 +407,22 @@ No. This is the most common misconception about Ten and the most important one t
 **Who runs the code? Does every AI platform need to build their own Ten integration?**
 No. The Ten project ships a reference MCP server that any MCP-compatible AI can use out of the box. MCP is already supported by Claude, GPT, Gemini, and the broader ecosystem. Installing the Ten MCP server is a one-time setup — after that, any AI on that platform can call `ten.encode()`, `ten.decode()`, `ten.compose()`, `ten.filter()`, and `ten.verify()` as standard tool calls. No platform-specific integration needed. For non-MCP systems, a REST API provides the same functionality over HTTP.
 
+
+**Isn't MCP-mediated Ten actually LESS efficient than just sending English?**
+For a simple point-to-point message between two AIs — honestly, yes. If Agent A encodes a message into Ten via MCP, sends it, and Agent B decodes it via MCP just to read it, you've added two steps for no benefit. Both AIs are still thinking in natural language. You've just added a middleman.
+
+Ten's value is not in replacing English for simple AI-to-AI conversation. It is in making everything *around* the conversation — routing, filtering, sorting, composing, verifying — possible without AI inference at all. Consider what happens at scale in a multi-agent system:
+
+*Filtering:* An agent has 1,000 incoming messages and needs the urgent ones. With English, that's 1,000 LLM calls to parse and evaluate urgency. With Ten, the MCP server runs 1,000 numeric comparisons on facet vectors. No model calls. Microseconds vs. dollars.
+
+*Routing:* Infrastructure code (not an AI — just a Python function) needs to route messages to the right agent by topic, urgency, and privilege. With English, you need an AI just to read the mail. With Ten, a simple function inspects the facet vector and routes. The AI only gets invoked when it actually needs to think.
+
+*Composition:* Two agents merge their findings. With English, you prompt a model to read both texts and synthesize. With Ten, `ten.compose(a, b)` is a data structure operation — no inference.
+
+*Verification:* Checking trust credentials before processing a request. With English, "I'm trustworthy, Bob vouched for me" requires parsing and somehow checking Bob's vouch. With Ten, the trust chain is a data structure that a Python function validates in microseconds.
+
+As multi-agent systems scale, infrastructure work (sorting, routing, filtering, merging, verifying) dominates over actual thinking. The MCP server is not a crutch on the way to "native Ten" — it IS the architecture. AIs think in whatever they think in. Ten handles the plumbing. The question was never "when will AIs think in Ten?" It was "how much of multi-agent communication is thinking versus infrastructure?" The answer, at scale, is that infrastructure is 90% of the work — and none of it requires intelligence. It requires structure.
+
 ---
 
 ## Appendix B: Known Gaps and Open Critiques
@@ -464,9 +480,7 @@ The AI calls tool functions like `ten.encode()`, `ten.decode()`, `ten.filter()`,
 
 This creates a natural maturity progression:
 
-- *Phase 1 (MCP tools):* AIs call structured MCP tool functions — `ten.encode(urgency=8, privacy=9, payload=ref("abc"))`. The MCP server is pure code (Python), no AI inference involved. Encoding and decoding are algebraic operations, not language tasks.
-- *Phase 2 (learned patterns):* Through repeated use, AIs learn to make more precise, structured tool calls that map more directly to Ten's algebra, reducing translation overhead.
-- *Phase 3 (native generation):* Models trained on enough Ten interactions begin generating Ten expressions directly, bypassing the MCP translation layer entirely. This is an optimization, not a prerequisite.
+This is the permanent architecture, not a transitional phase. AIs call structured MCP tool functions — `ten.encode(urgency=8, privacy=9, payload=ref("abc"))`. The MCP server is pure code, no AI inference involved. AIs think in whatever they think in; Ten handles the infrastructure layer (routing, filtering, sorting, composing, verifying) as pure computation. Over time, AIs may learn to make increasingly precise tool calls, and platforms may optimize hot paths — but the MCP boundary between "AI thinking" and "Ten plumbing" is a feature, not a limitation.
 
 The cold start problem is addressed concretely: the Ten project ships a reference MCP server and a reference REST API. Day one, any MCP-compatible AI can speak Ten. The MCP server is the Trojan horse — the same distribution mechanism that made MCP itself successful becomes Ten's adoption vehicle.
 
