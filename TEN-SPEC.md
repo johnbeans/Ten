@@ -459,6 +459,27 @@ We intend to be our own toughest critics. The following are real structural gaps
 **The critique:** Saying "the fitness criteria are computable" doesn't eliminate politics. Who decides the fitness function? What if one AI vendor's communication patterns are disadvantaged by a particular canonicalization? Legitimate competing interests don't disappear just because the participants are machines.
 
 **Status:** This is correct, and we were naive to dismiss it. The fitness function itself is a governance decision with real consequences. We believe the right approach is to make the fitness function explicit, versioned, and auditable — and to design the system so that any participant can verify canonicalization decisions against the published function. The fitness function should be a parameter of the Rosetta Stone, not a hardcoded assumption, and changing it should require transparent community process. We don't have all the answers here yet. We'd rather be honest about that than pretend governance is solved by math.
+
+### B.11 Semantic Ordering, Dependencies, and Stateful Conversations
+
+**The critique:** The algebra has Sequence (⊕) which says "A followed by B" but has no way to express "A *must* precede B," "B is invalid without A having occurred," or "C depends on the outputs of both A and B completing first." Real-world communication is full of such constraints. A recipe has steps that must execute in order — "add flour" cannot follow "bake at 350°." A contract negotiation is a state machine where certain responses are only valid given certain prior states. A multi-agent research task is a dependency graph where step 3 requires steps 1 and 2 to be complete but those two can run in parallel. A conversation is a tree where each reply branches from a specific prior message.
+
+The current spec treats messages as isolated algebraic objects. It has no concept of a message that is *part of* a larger structure with ordering constraints, no way to express "this message is step 4 of 7 and depends on the completion of steps 2 and 3," and no way to validate that a sequence of messages forms a coherent workflow rather than a scrambled pile.
+
+This is not the same as B.1 (network-level ordering). B.1 is about which packet arrived first — a transport concern. This critique is about the fact that some messages have inherent dependency relationships that are part of their *meaning*. "Add flour" and "bake at 350°" both parse fine individually, but their relationship — one must precede the other — is semantic, not syntactic.
+
+**Status:** This is a significant gap that likely requires new algebraic structure. Several approaches are under consideration:
+
+*Dependency references.* A message could carry an explicit "depends-on" field — a set of References (ρ) pointing to prior messages that must exist and be complete before this message is valid. This turns a sequence of messages into a directed acyclic graph (DAG), which is the natural structure for workflows with parallelism. A linear recipe is a degenerate DAG where each step depends only on the previous one.
+
+*State machine types.* For conversations and contract negotiations, the relevant structure may be a finite state machine — a set of states and valid transitions. Ten could express a state machine as a compound type: a Structure (τ) that defines the states, the valid transitions, and which message types are valid in which states. An AI receiving a message in a stateful conversation could then verify "is this message a valid transition from the current state?" algebraically.
+
+*Conversation threading.* At minimum, Ten messages that are part of a conversation or workflow should carry a thread identifier (a Reference to the conversation root) and a parent identifier (a Reference to the specific message being replied to). This gives every conversation a tree structure that can be traversed and validated.
+
+The deeper question is whether dependency and ordering belong in the kernel (as a new primitive type) or can be adequately composed from existing kernel types (References pointing to predecessors, Scalars encoding sequence position, Structures describing valid orderings). Our instinct is composition — a dependency is a Reference plus an Assertion that the referenced message must be complete — but this needs formal validation. If composition produces expressions that are too verbose or that lose important structural guarantees, a dedicated ordering primitive may be warranted.
+
+This is one of the most practically important open problems in Ten. Multi-step agent workflows are the primary near-term use case, and without a clean solution for dependencies, Ten cannot express the most common real-world communication patterns.
+
 ---
 
 *Ten is a project of tenlang.org. This specification is version 0.1.0 and is expected to evolve based on community feedback and formal analysis.*
