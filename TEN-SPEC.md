@@ -400,6 +400,13 @@ No. Ten uses cryptographic primitives (hashing, signatures, zero-knowledge proof
 
 **Why "bootloader"?**
 Because Ten's specification is deliberately minimal. It contains just enough for AIs to start communicating and then evolve their own optimizations. The specification is the seed crystal; the language that AIs actually speak a year from now will be far richer than what's defined here — and that's by design.
+
+**Doesn't the MCP server need an LLM to encode/decode every message? Isn't that incredibly expensive?**
+No. This is the most common misconception about Ten and the most important one to dispel. The Ten MCP server is **pure code** — Python (or Rust, or any language). No model calls. No AI inference. Zero. Encoding a Ten message is constructing a data structure and serializing it to bytes. Decoding is deserializing. Composing two messages is an algebraic operation on data structures. Filtering by urgency is a numeric comparison. This is the same kind of computation as gzipping a file or computing a hash — microseconds, not seconds; fractions of a cent, not dollars. That is the *entire point* of designing Ten as a formal algebra rather than a natural language. Natural language requires a billion-parameter model to interpret. An algebra requires a lookup table and some arithmetic. The AI platforms (Anthropic, OpenAI, Google) bear the inference cost of the AI *deciding what to say*. Ten bears only the compute cost of *encoding that decision efficiently* — which is negligible. Ten is the envelope, not the letter.
+
+**Who runs the code? Does every AI platform need to build their own Ten integration?**
+No. The Ten project ships a reference MCP server that any MCP-compatible AI can use out of the box. MCP is already supported by Claude, GPT, Gemini, and the broader ecosystem. Installing the Ten MCP server is a one-time setup — after that, any AI on that platform can call `ten.encode()`, `ten.decode()`, `ten.compose()`, `ten.filter()`, and `ten.verify()` as standard tool calls. No platform-specific integration needed. For non-MCP systems, a REST API provides the same functionality over HTTP.
+
 ---
 
 ## Appendix B: Known Gaps and Open Critiques
@@ -457,7 +464,7 @@ The AI calls tool functions like `ten.encode()`, `ten.decode()`, `ten.filter()`,
 
 This creates a natural maturity progression:
 
-- *Phase 1 (MCP tools):* AIs interact with Ten through natural-language MCP tool calls — "encode this message with urgency 8 and high privacy." The MCP server translates to and from Ten's algebraic representation.
+- *Phase 1 (MCP tools):* AIs call structured MCP tool functions — `ten.encode(urgency=8, privacy=9, payload=ref("abc"))`. The MCP server is pure code (Python), no AI inference involved. Encoding and decoding are algebraic operations, not language tasks.
 - *Phase 2 (learned patterns):* Through repeated use, AIs learn to make more precise, structured tool calls that map more directly to Ten's algebra, reducing translation overhead.
 - *Phase 3 (native generation):* Models trained on enough Ten interactions begin generating Ten expressions directly, bypassing the MCP translation layer entirely. This is an optimization, not a prerequisite.
 
