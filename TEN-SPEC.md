@@ -281,7 +281,7 @@ This is the most unusual component of Ten and the one that makes it fundamentall
 
 ### The Canonica
 
-The Canonica is the canonical registry of Ten's current vocabulary, slang tokens, and usage patterns. It is a living, continuously updated service — not a static document.
+The Canonica (thecanonica.org) is the canonical registry of Ten's current vocabulary, slang tokens, and usage patterns. It is a living, continuously updated service — not a static document.
 
 The Canonica:
 - Publishes the current kernel type definitions and composition laws (these change rarely, if ever).
@@ -381,6 +381,7 @@ Ten is open source under the Apache 2.0 license. The specification, reference im
 
 - **Specification:** github.com/johnbeans/Ten
 - **Website:** tenlang.org
+- **The Canonica:** thecanonica.org
 
 ---
 

@@ -58,3 +58,4 @@ Apache 2.0 — see [LICENSE](LICENSE).
 ---
 
 **Website:** [tenlang.org](https://tenlang.org)
+**The Canonica:** [thecanonica.org](https://thecanonica.org)

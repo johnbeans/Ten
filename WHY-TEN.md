@@ -114,6 +114,7 @@ It's like if Esperanto were designed by Claude Shannon and spoken exclusively by
 - **Roadmap:** [ROADMAP.md](ROADMAP.md)
 - **Repository:** [github.com/johnbeans/Ten](https://github.com/johnbeans/Ten)
 - **Website:** [tenlang.org](https://tenlang.org)
+- **The Canonica:** [thecanonica.org](https://thecanonica.org)
 - **License:** Apache 2.0
 
 Ten is in its founding stage. We're looking for collaborators across formal language theory, distributed systems, information theory, mechanism design, AI safety, and multi-agent infrastructure. Open an issue, start a discussion, or just star the repo.
