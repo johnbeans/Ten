@@ -30,6 +30,7 @@ It is a formal algebra whose messages can be composed, projected, filtered, sort
 - **[TEN-SPEC.md](TEN-SPEC.md)** — The founding specification. Start here.
 - **[ROADMAP.md](ROADMAP.md)** — Implementation plan. The Ten MCP server is the primary deliverable.
 - **[WHY-TEN.md](WHY-TEN.md)** — Elevator pitches for every audience, from platform engineers to type theorists.
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** — Technical architecture: C core, Python wrappers, memory model, performance targets.
 
 ## Status
 
