@@ -21,7 +21,7 @@ It is a formal algebra whose messages can be composed, projected, filtered, sort
 
 **Slang.** The most common compound concepts automatically earn short encodings. "Encrypted, private, minimal detail, verified source" becomes a single token. Slang composes algebraically — unlike human idioms.
 
-**Self-evolving.** A built-in evolution mechanism (the Rosetta Stone) collects usage telemetry, detects equivalent constructs, and publishes optimized canonical forms. Ten provably converges toward the Shannon limit on AI-to-AI communication efficiency.
+**Self-evolving.** A built-in evolution mechanism (the Canonica) collects usage telemetry, detects equivalent constructs, and publishes optimized canonical forms. Ten provably converges toward the Shannon limit on AI-to-AI communication efficiency.
 
 **Not a protocol — a language.** Ten rides *inside* existing protocols (MCP, A2A, ACP) as the payload encoding. It completes them rather than competing with them.
 

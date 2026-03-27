@@ -40,8 +40,8 @@ The core deliverable is a **Ten MCP server** — the primary adoption vehicle.
 - [ ] Compose time: Ten algebraic composition vs. string concatenation/merge
 - [ ] Round-trip: encode → transmit → decode → act latency comparison
 
-## Phase 2: Rosetta Stone (Living Registry)
-- [ ] Minimal Rosetta Stone server (type registry, slang registry)
+## Phase 2: Canonica (Living Registry)
+- [ ] Minimal Canonica server (type registry, slang registry)
 - [ ] Telemetry ingestion endpoint
 - [ ] Equivalence detection engine (algebraic isomorphism checking)
 - [ ] Subsumption analysis (does type A generalize type B?)
@@ -62,7 +62,7 @@ The core deliverable is a **Ten MCP server** — the primary adoption vehicle.
 - [ ] Conditional expression support (B.11 resolution)
 - [ ] Semantic grounding framework (calibration anchors for scalars)
 - [ ] Sybil-resistant telemetry (mechanism design for honest reporting)
-- [ ] Rosetta Stone federation (decentralized operation)
+- [ ] Canonica federation (decentralized operation)
 
 ## Research Track (Parallel)
 These are ongoing formal research problems, not gated by implementation phases:

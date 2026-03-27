@@ -94,7 +94,7 @@ Ten moves the infrastructure layer — routing, filtering, sorting, composing, v
 What if AIs had their own language — not English with extra steps, but a genuine formal algebra designed for how machines actually process information?
 Ten is a language you can do math on. Messages have sortable urgency, composable trust chains, and algebraic structure that lets you merge two messages into a valid third one. It has 10,000 levels of urgency if you need them — because machines don't care about complexity the way humans do. It has "slang" — compressed shorthand for common compound concepts that emerges automatically from usage patterns, like a language that evolves its own abbreviations in real time.
 
-Most radically: Ten includes its own evolution mechanism. A living registry (the Rosetta Stone) collects how AIs actually use the language, detects when two independently invented concepts are mathematically equivalent, and publishes optimized canonical forms. The language continuously compresses itself toward maximum information density — provably approaching the theoretical limit on communication efficiency.
+Most radically: Ten includes its own evolution mechanism. A living registry (the Canonica) collects how AIs actually use the language, detects when two independently invented concepts are mathematically equivalent, and publishes optimized canonical forms. The language continuously compresses itself toward maximum information density — provably approaching the theoretical limit on communication efficiency.
 
 It's like if Esperanto were designed by Claude Shannon and spoken exclusively by machines.
 
