@@ -123,6 +123,9 @@ A Ten-native message transport would be a store-and-forward service where all fi
 
 This is a separate project — Ten doesn't need agent email, and agent email doesn't need to be part of Ten. But it illustrates why a formal algebra for machine communication unlocks applications that structured JSON and natural language cannot.
 
+**This market already exists.** Agent email infrastructure is being built right now. Startups are raising millions to give AI agents their own inboxes, with APIs for sending, receiving, threading, and parsing. Hundreds of thousands of agent users are already sending email. But the messages inside those inboxes are still natural language — the same format designed for humans in 1982. The infrastructure solves the plumbing (agents can send and receive) but not the language (the messages are still unstructured text that requires inference to parse, filter, prioritize, and verify). That's the gap. Agent email infrastructure with Ten as the native message format would be the difference between "agents can email each other" and "agents can email each other *efficiently*" — with algebraic spam immunity, microsecond priority sorting, computable trust chains, and reference-based threading instead of Re: Re: Fwd: Re:.
+
+
 
 ## The One-Liner
 
