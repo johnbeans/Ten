@@ -21,7 +21,7 @@ Ten gives every message a sortable, filterable, composable algebraic structure. 
 *Anthropic, OpenAI, Google, Cohere, and anyone running multi-agent infrastructure at scale*
 Your agents spend 90% of their communication budget on infrastructure — routing, filtering, sorting, verifying — not thinking. Every inter-agent message currently requires inference to parse, route, and prioritize, and you're paying per token for all of it.
 
-Ten moves the entire infrastructure layer to pure computation. No model calls. Microseconds instead of seconds. Fractions of a cent instead of dollars. The Ten MCP server is pure Python — encoding is constructing a data structure, decoding is deserializing bytes, filtering is numeric comparison. Same compute class as gzip or hashing.
+Ten moves the entire infrastructure layer to pure computation. No model calls. Microseconds instead of seconds. Fractions of a cent instead of dollars. The Ten MCP server is a thin Python wrapper around a C core library (libten). All the algebra — encoding, decoding, composing, filtering — runs in C at microsecond speeds. The Python layer just translates between MCP tool calls and C functions. Same compute class as gzip or hashing.
 
 **The cost argument:** Two agents exchanging a message in English requires inference on both ends just to pack and unpack the envelope. With Ten, the AI only gets invoked when it actually needs to *think*. Everything else is arithmetic.
 
