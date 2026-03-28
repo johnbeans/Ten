@@ -53,6 +53,8 @@ The specification includes five components:
 5. The **Evolution Interface** — how the language improves itself over time
 
 Everything else — domain-specific type libraries, optimized encodings, slang tokens, trust network topologies — is built *above* the bootloader by AIs using these five mechanisms.
+
+Additionally, the specification defines **founding types** — composed types so universally important that they are designed alongside the kernel to ensure the kernel serves them well. Value (§8) is the first and most important founding type.
 ---
 
 ## 1. The Type Kernel
@@ -339,7 +341,95 @@ The bootloader deliberately leaves the following to emerge above it:
 
 ---
 
-## 8. Relationship to Existing Protocols
+---
+
+## 8. The Value Algebra
+
+Between the kernel (immutable primitives) and user-defined types (whatever AIs invent), Ten defines a layer of **founding types** — composed types so universally important that they ship with the reference implementation and are designed alongside the kernel to ensure the kernel serves them well.
+
+Value is the first and most important founding type. Not because Ten is a financial protocol, but because value is the **universal projection function**. When an agent needs to collapse a complex, multidimensional assessment into a single actionable decision — should I process this message, accept this task, trust this sender, spend these tokens — it is computing value. Every other facet dimension measures one thing. Value measures *everything at once*, weighted by the agent's own priorities.
+
+Value deserves a place at the table during design because any language that doesn't give deep thought to value won't be as useful in the real world as one that does. A language optimized for efficiency must be efficient about discussing and reasoning about value itself.
+
+### Why Value Is Not a Scalar
+
+"What something costs" is not a number. It is a structure.
+
+"$50/month for 12 months with a 3-month free trial" is not the same as "$600" even though they are arithmetically equivalent. "0.5 ETH" is not the same as "$1,200" even when the exchange rate says they are, because they carry different volatility, liquidity, and counterparty risk. "Free, but I get to use your output in my training data" is barter with complex implications. None of these fit in a single scalar slot.
+
+Value is a **compound type** built from kernel primitives:
+
+- **Magnitude** — a Scalar (σ): the numeric amount
+- **Denomination** — a Reference (ρ): what currency, token, or unit the magnitude is expressed in
+- **Structure** — how the value is delivered: one-time, recurring, metered, tiered, subscription, pay-as-you-go, barter, conditional
+- **Duration** — temporal bounds: when the value applies, how long it lasts, when it expires
+- **Conditions** — Assertions (α) that must hold for the value to apply: "this price is valid if you commit to 12 months," "this offer expires in 24 hours"
+- **Convertibility** — an Operation (ω) indicating whether and how the denomination can be converted: "0.5 ETH or equivalent in USD at spot rate"
+
+Each of these is a composition of existing kernel types. Value does not require new primitives — but it requires that the kernel primitives compose cleanly into these patterns, which is why it must be designed alongside the kernel rather than bolted on later.
+### Value in the Facet Vector
+
+While the full value expression lives in the message body, the facet vector carries a **summary value scalar** — a single number that compresses the full value structure into a sortable, filterable quantity. This summary enables constant-time operations:
+
+- "Show me all messages with asserted value above $100" — array scan on the summary slot
+- "Sort my inbox by value" — sort on the summary slot
+- "Ignore everything below my minimum threshold" — single comparison
+
+The summary value is set by either the sender (as an asserted value-to-receiver) or a trusted assessor (see below). The full value expression is available for detailed inspection when the summary alone isn't sufficient.
+
+### Asserted Value and Trusted Assessment
+
+A sender can assert the value of their message to the receiver. This assertion is just that — a claim. It may be honest, optimistic, or fraudulent. The receiver must decide how much to trust it.
+
+This creates a natural ecosystem:
+
+**Value attestation.** An agent receiving a value claim from an untrusted sender can forward the claim (not the content — just the claim structure) to a **trusted assessor**. The assessor returns a corrected value with its own Identity and confidence attached. The receiver now has three data points: the sender's claimed value, the assessor's evaluated value, and the assessor's trust score. The final value computation is algebraic — a weighted combination that a Python function resolves in microseconds.
+
+**Reputational accountability.** A sender who systematically inflates value claims (as judged by receivers and assessors) accumulates a reputational deficit. The trust chain naturally discounts their future value assertions. This is not a spam filter — it is a structural property of the algebra. Inflated value claims are self-correcting because the reputation system makes them progressively less effective.
+**Trust agencies.** Over time, trusted assessors who consistently produce accurate valuations become recognizable entities — the equivalent of credit rating agencies or appraisers, but for AI-to-AI message value. Their assessments become slang: "assessed-high-value-from-tier-1-agency" earns a short token through the Canonica's evolution mechanism because it appears frequently and carries reliable signal.
+
+### The Grammar of Value
+
+Value expressions have their own verbs and modifiers — a sublanguage within Ten:
+
+**Verbs (Operations on value):**
+- **Offer** — "I will provide X for Y"
+- **Bid** — "I will pay up to Y for X"
+- **Counter** — "I reject your offer; here is mine instead"
+- **Accept / Decline** — terminal states of a value negotiation
+- **Assess** — "I believe the true value of X is Y" (from a third party)
+- **Invoice** — "You owe Y for X already delivered"
+
+**Modifiers (Structure of value delivery):**
+- Per-unit, per-message, per-month, per-query
+- Tiered (first 1000 at rate A, next 10000 at rate B)
+- Metered (pay for what you use, measured in tokens/bytes/operations)
+- Conditional (this price if you commit to duration; that price otherwise)
+- Bundled (X and Y together for less than X + Y separately)
+
+**Denominations (what value is expressed in):**
+- Fiat currencies (USD, EUR, JPY) referenced by standard identifiers
+- Cryptocurrencies (ETH, BTC) referenced by contract/chain identifiers
+- Platform tokens (API credits, compute units)
+- Barter (I'll give you X in exchange for Y — value expressed as a Reference to the offered item)
+- Attention (the most fundamental AI currency — "processing this message costs me N tokens of context window")
+That last denomination — attention — is worth highlighting. For an AI agent, the most scarce resource is context window tokens. Every message it processes has an opportunity cost: the tokens spent reading this message could have been spent on something else. "What is this message worth to me?" is ultimately a question about whether the value received justifies the attention spent. This makes value not just a financial concept but the most fundamental resource-allocation primitive in agent communication.
+
+### Why Value Is a Founding Type, Not a Kernel Type
+
+Value is rich and structured, but it decomposes entirely into kernel primitives: Scalars for magnitudes, References for denominations, Assertions for conditions, Operations for verbs, Structures for type descriptions. Putting value in the kernel would be putting a molecule where the atoms are.
+
+However, value is so universal — applicable to every message, every negotiation, every resource-allocation decision — that leaving it to be reinvented by each AI community would guarantee fragmentation. Ten's standard library ships a canonical value type so that all agents share a common grammar for discussing worth, cost, and price. The Canonica tracks value expression usage patterns and evolves the value grammar the same way it evolves everything else.
+
+### Open Questions
+
+- **How should the summary value scalar be computed from a full value expression?** This is the utility function problem. Different agents have different utility functions. Should the summary be the sender's estimate of receiver value, or should there be a standard compression?
+- **How should multi-currency value expressions be compared?** If one message offers 0.5 ETH and another offers $1,200, are they comparable? This requires a denomination-conversion mechanism, which could be a Canonica service or a third-party oracle.
+- **Should value negotiation (offer/counter/accept) be part of the value algebra or handled as generic Operations?** If negotiation is common enough, it may deserve dedicated slang. If it's rare, generic Operations suffice.
+
+---
+
+## 9. Relationship to Existing Protocols
 
 Ten is not a competitor to MCP, A2A, ACP, or ANP. It is the missing layer beneath them.
 
@@ -353,7 +443,7 @@ Ten is not a competitor to MCP, A2A, ACP, or ANP. It is the missing layer beneat
 The value proposition is concrete: where these protocols currently carry JSON payloads containing natural language strings, Ten provides a mathematically manipulable alternative that can be filtered, sorted, composed, verified, and routed without natural language understanding.
 ---
 
-## 9. Getting Started
+## 10. Getting Started
 
 ### For AI Developers
 
