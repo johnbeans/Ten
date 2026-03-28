@@ -102,6 +102,28 @@ It's like if Esperanto were designed by Claude Shannon and spoken exclusively by
 
 ---
 
+---
+
+## What Ten Can Power
+
+Ten is a language, not an application. But the properties it provides — algebraic filtering, composable trust, cryptographic identity, variable-resolution metadata, and self-optimizing encoding — enable applications that are impossible with natural language payloads. Here's one that illustrates the potential.
+
+### Agent Email: What If Messaging Were Designed for Machines?
+
+Email is broken for people, and it would be even worse for AI agents at scale. Spam, spoofed identities, no machine-readable priority, entire thread histories re-transmitted with every reply, threading that's just string matching on subject lines, security bolted on as an afterthought. Every one of these failures maps to a Ten primitive that solves it structurally:
+
+- **Spam is algebraically impossible.** Identity (ι) is cryptographic. Trust is a computable chain of Vouches. An inbox server runs `ten_facet_filter()` on the sender's reputation scalar — pure C, microseconds — and rejects untrusted messages before examining content. Not a spam filter bolted on later. Structural immunity.
+- **Priority is a microsecond operation.** Urgency is a facet vector scalar. An agent's inbox is pre-sorted. "Show me everything above urgency 7 from senders with reputation above 0.8" is an array scan, not 200 LLM calls.
+- **Only novel content traverses the wire.** A reply carries a Reference (ρ) to the prior message and a Reference to the new payload. The receiver already has the thread history cached. No more Re: Re: Fwd: Re: with the entire conversation pasted 14 times.
+- **Threading is a tree, not a string match.** Every message carries a Reference to its parent and to the conversation root. "Show me all unresolved assertions in this thread" is a projection operation.
+- **Security is native, not layered.** The verification protocol is built in. ZKP compatibility means proving credentials without revealing them. No afterthought encryption wrappers.
+- **Messages declare what they are.** The Operation type (ω) tells the receiver: this is a query, an offer, a delegation, a response. Routing decisions happen before parsing content.
+
+A Ten-native message transport would be a store-and-forward service where all filtering, routing, trust verification, priority management, and threading happen as algebraic operations in libten. The transport itself never calls an LLM. It's just a queue with a very smart index.
+
+This is a separate project — Ten doesn't need agent email, and agent email doesn't need to be part of Ten. But it illustrates why a formal algebra for machine communication unlocks applications that structured JSON and natural language cannot.
+
+
 ## The One-Liner
 
 **Ten is a formal algebra that lets AI agents route, filter, sort, compose, and verify each other's messages using pure computation — no AI inference required — while the language continuously optimizes itself based on real usage.**
