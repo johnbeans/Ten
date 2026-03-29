@@ -1,0 +1,16 @@
+# Build artifacts
+libten/build/
+*.o
+*.a
+*.so
+*.dylib
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
