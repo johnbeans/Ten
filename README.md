@@ -13,6 +13,14 @@ It is a formal algebra whose messages can be composed, projected, filtered, sort
 
 **Ten's answer:** A mathematically rigorous message algebra where urgency is a sortable scalar in a fixed-position header, where two messages can be composed into a valid third message, where trust is a computable property of the message itself, and where the language continuously optimizes its own encoding based on real usage patterns.
 
+## The Most Important Thing
+
+Ten makes a strong claim: that a formal algebra beats the status quo (natural language + LLM inference, or JSON + custom code) for machine-to-machine communication at scale. **Proving this claim transparently — with measured token counts, dollar costs, latency, variance data, and honest accounting of where Ten loses — is the project's primary goal.**
+
+The status quo is not weak. LLMs are cheap and getting cheaper. JSON is universal and well-tooled. Ten must earn its place with data, not assertions. The [validation plan](VALIDATION.md) designs industry-specific stress tests (derivatives portfolios, international supply chains, clinical trials), measures everything, and includes an adversarial comparison against JSON + domain code to isolate what Ten specifically contributes beyond "a schema that domain code reads from."
+
+If Ten's advantages turn out to be narrow, the project will say so. Intellectual honesty is more valuable than marketing.
+
 ## Key Ideas
 
 **Fixed algebra, unbounded vocabulary.** The composition rules never change. The vocabulary evolves continuously as AIs discover what they need to say. New concepts are compositions of existing primitives — never breaking changes.
@@ -28,14 +36,14 @@ It is a formal algebra whose messages can be composed, projected, filtered, sort
 ## Documentation
 
 - **[TEN-SPEC.md](TEN-SPEC.md)** — The founding specification. Start here.
-- **[ROADMAP.md](ROADMAP.md)** — Implementation plan. The Ten MCP server is the primary deliverable.
+- **[VALIDATION.md](VALIDATION.md)** — Industry stress tests, token economics, and the honest case for (and against) Ten.
+- **[ROADMAP.md](ROADMAP.md)** — Implementation plan. Validation is the critical gate.
 - **[WHY-TEN.md](WHY-TEN.md)** — Elevator pitches for every audience, from platform engineers to type theorists.
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** — Technical architecture: C core, Python wrappers, memory model, performance targets.
 
 ## Status
 
-Ten is in the **founding specification** stage. The next milestone is a reference MCP server that lets any MCP-compatible AI (Claude, GPT, Gemini, and others) speak Ten through tool calls — no native model support required. The algebra is being formalized, the kernel types are under investigation, and we're seeking collaborators who think about formal languages, information theory, abstract algebra, distributed systems, and mechanism design.
-Ten is in the **founding specification** stage. The algebra is being formalized, the kernel types are under investigation, and we're seeking collaborators who think about formal languages, information theory, abstract algebra, and distributed systems.
+**libten (C core)** is implemented and passing all 49 tests — 6 kernel types, 6 composition operations, facet vectors, recursive validation, arena allocation. Next: binary serialization, Python bindings, MCP server, then the [validation phase](VALIDATION.md) that determines whether Ten's claims hold up under measurement.
 
 ### Open Research Problems
 

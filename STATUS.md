@@ -2,6 +2,16 @@
 # Last updated: 2026-03-29
 # Read this FIRST in any new chat to avoid re-reading 93KB of docs.
 
+## Strategic Priority
+Proving Ten's value versus the status quo (JSON + LLM, or JSON + domain
+code) is the most important goal of the project. Everything we build
+exists to make honest measurement possible. If the measurements don't
+support the claims, we say so and recalibrate.
+See VALIDATION.md for the full plan: industry stress tests, token
+economics, breakeven analysis, and a JSON adversarial comparison that
+isolates what Ten specifically contributes vs. what domain libraries
+contribute independently of Ten.
+
 ## What Ten Is (30-second version)
 A formal algebra for AI-to-AI communication. Not a protocol — a language
 that rides inside protocols (MCP, A2A). Messages are math (sortable,
@@ -19,7 +29,8 @@ Location on disk: /Users/johnbeans/Ten
 ## Doc files (reference only — don't re-read unless needed)
 - TEN-SPEC.md (44KB) — Full algebra spec, kernel types, encoding, FAQ
 - ARCHITECTURE.md (19KB) — C core rationale, arena model, package layout
-- ROADMAP.md (4KB) — Phase 1-3 plan
+- ROADMAP.md — Phase plan. Validation (Phase 1.5) is the critical gate.
+- VALIDATION.md — Industry stress tests, token economics, honest accounting
 - WHY-TEN.md (10KB) — Audience-targeted pitches
 
 ## libten Implementation Status
@@ -58,6 +69,10 @@ libten/
 
 4. **The Canonica** — Token registry service.
    Blocked on: MCP server (needs real usage telemetry).
+
+5. **Validation (Phase 1.5)** — Industry stress tests. Blocked on: libten
+   serialization (need encode/decode for round-trip benchmarks, but the
+   in-memory algebra is ready for domain library development now).
 
 ## Key Design Decisions (already made)
 - Messages carry metadata, not content. Payloads are SHA-256 References.
