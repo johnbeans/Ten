@@ -450,6 +450,393 @@ static void test_utility(void) {
     ten_arena_free(&a);
 }
 /* ══════════════════════════════════════════════════════════
+ *  Test: Serialization (encode/decode round-trip)
+ * ══════════════════════════════════════════════════════════ */
+
+static void test_serialization(void) {
+    ten_arena_t a;
+    ten_arena_init(&a, TEN_DEFAULT_ARENA_SIZE);
+    uint8_t wire[4096];
+    size_t  outlen;
+
+    /* ── Scalar round-trip ─────────────────────────────────── */
+
+    TEST("encode/decode scalar (64-bit)");
+    {
+        ten_expr_t *s = ten_scalar(&a, TEN_FACET_URGENCY, 0.95, TEN_PREC_64BIT);
+        assert(ten_encode(s, wire, sizeof(wire), &outlen) == TEN_OK);
+        assert(outlen > 9);  /* at least envelope */
+
+        ten_arena_t a2;
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        ten_expr_t *d = ten_decode(&a2, wire, outlen);
+        assert(d != NULL);
+        assert(d->type == TEN_TYPE_SCALAR);
+        assert(d->data.scalar.dimension == TEN_FACET_URGENCY);
+        assert(d->data.scalar.precision == TEN_PREC_64BIT);
+        assert(fabs(d->data.scalar.value - 0.95) < 1e-9);
+        ten_arena_free(&a2);
+    }
+    PASS();
+
+    TEST("encode/decode scalar (8-bit)");
+    {
+        ten_expr_t *s = ten_scalar(&a, TEN_FACET_COST, 42.0, TEN_PREC_8BIT);
+        assert(ten_encode(s, wire, sizeof(wire), &outlen) == TEN_OK);
+
+        ten_arena_t a2;
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        ten_expr_t *d = ten_decode(&a2, wire, outlen);
+        assert(d != NULL);
+        assert(d->type == TEN_TYPE_SCALAR);
+        assert(d->data.scalar.precision == TEN_PREC_8BIT);
+        assert(fabs(d->data.scalar.value - 42.0) < 1e-9);
+        ten_arena_free(&a2);
+    }
+    PASS();
+
+    TEST("encode/decode scalar (1-bit)");
+    {
+        ten_expr_t *s = ten_scalar(&a, 0, 1.0, TEN_PREC_1BIT);
+        assert(ten_encode(s, wire, sizeof(wire), &outlen) == TEN_OK);
+
+        ten_arena_t a2;
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        ten_expr_t *d = ten_decode(&a2, wire, outlen);
+        assert(d != NULL);
+        assert(d->data.scalar.value == 1.0);
+        ten_arena_free(&a2);
+    }
+    PASS();
+
+    /* ── Reference round-trip ──────────────────────────────── */
+
+    TEST("encode/decode reference");
+    {
+        uint8_t hash[TEN_HASH_SIZE];
+        memset(hash, 0xAB, TEN_HASH_SIZE);
+        ten_expr_t *r = ten_ref(&a, hash);
+        assert(ten_encode(r, wire, sizeof(wire), &outlen) == TEN_OK);
+
+        ten_arena_t a2;
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        ten_expr_t *d = ten_decode(&a2, wire, outlen);
+        assert(d != NULL);
+        assert(d->type == TEN_TYPE_REFERENCE);
+        assert(memcmp(d->data.ref.hash, hash, TEN_HASH_SIZE) == 0);
+        ten_arena_free(&a2);
+    }
+    PASS();
+
+    /* ── Identity round-trip ───────────────────────────────── */
+
+    TEST("encode/decode identity");
+    {
+        uint8_t key[32];
+        memset(key, 0xCD, 32);
+        ten_expr_t *id = ten_identity(&a, key, 32);
+        assert(ten_encode(id, wire, sizeof(wire), &outlen) == TEN_OK);
+
+        ten_arena_t a2;
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        ten_expr_t *d = ten_decode(&a2, wire, outlen);
+        assert(d != NULL);
+        assert(d->type == TEN_TYPE_IDENTITY);
+        assert(d->data.identity.keylen == 32);
+        assert(memcmp(d->data.identity.pubkey, key, 32) == 0);
+        ten_arena_free(&a2);
+    }
+    PASS();
+
+    /* ── Assertion round-trip ──────────────────────────────── */
+
+    TEST("encode/decode assertion");
+    {
+        uint8_t hash[TEN_HASH_SIZE];
+        memset(hash, 0x11, TEN_HASH_SIZE);
+        uint8_t key[32];
+        memset(key, 0x22, 32);
+        ten_expr_t *claim = ten_ref(&a, hash);
+        ten_expr_t *who   = ten_identity(&a, key, 32);
+        ten_expr_t *asr   = ten_assertion(&a, claim, who, 0.87);
+        assert(ten_encode(asr, wire, sizeof(wire), &outlen) == TEN_OK);
+
+        ten_arena_t a2;
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        ten_expr_t *d = ten_decode(&a2, wire, outlen);
+        assert(d != NULL);
+        assert(d->type == TEN_TYPE_ASSERTION);
+        assert(fabs(d->data.assertion.confidence - 0.87) < 1e-9);
+        assert(d->data.assertion.claim != NULL);
+        assert(d->data.assertion.claim->type == TEN_TYPE_REFERENCE);
+        assert(d->data.assertion.who != NULL);
+        assert(d->data.assertion.who->type == TEN_TYPE_IDENTITY);
+        ten_arena_free(&a2);
+    }
+    PASS();
+
+    /* ── Operation round-trip ──────────────────────────────── */
+
+    TEST("encode/decode operation with args");
+    {
+        ten_expr_t *s1 = ten_scalar(&a, 0, 100.0, TEN_PREC_32BIT);
+        ten_expr_t *s2 = ten_scalar(&a, 1, 200.0, TEN_PREC_32BIT);
+        ten_expr_t *args[2] = { s1, s2 };
+        ten_expr_t *op = ten_operation(&a, TEN_OP_QUERY, args, 2);
+        assert(ten_encode(op, wire, sizeof(wire), &outlen) == TEN_OK);
+
+        ten_arena_t a2;
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        ten_expr_t *d = ten_decode(&a2, wire, outlen);
+        assert(d != NULL);
+        assert(d->type == TEN_TYPE_OPERATION);
+        assert(d->data.operation.verb == TEN_OP_QUERY);
+        assert(d->data.operation.nargs == 2);
+        assert(d->data.operation.args[0]->type == TEN_TYPE_SCALAR);
+        assert(d->data.operation.args[1]->type == TEN_TYPE_SCALAR);
+        ten_arena_free(&a2);
+    }
+    PASS();
+
+    TEST("encode/decode operation with zero args");
+    {
+        ten_expr_t *op = ten_operation(&a, TEN_OP_CANCEL, NULL, 0);
+        assert(ten_encode(op, wire, sizeof(wire), &outlen) == TEN_OK);
+
+        ten_arena_t a2;
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        ten_expr_t *d = ten_decode(&a2, wire, outlen);
+        assert(d != NULL);
+        assert(d->type == TEN_TYPE_OPERATION);
+        assert(d->data.operation.verb == TEN_OP_CANCEL);
+        assert(d->data.operation.nargs == 0);
+        ten_arena_free(&a2);
+    }
+    PASS();
+
+    /* ── Structure round-trip ──────────────────────────────── */
+
+    TEST("encode/decode structure");
+    {
+        ten_expr_t *m1 = ten_scalar(&a, 0, 1.0, TEN_PREC_8BIT);
+        ten_expr_t *m2 = ten_scalar(&a, 1, 2.0, TEN_PREC_8BIT);
+        ten_expr_t *members[2] = { m1, m2 };
+        ten_expr_t *st = ten_structure(&a, members, 2);
+        assert(ten_encode(st, wire, sizeof(wire), &outlen) == TEN_OK);
+
+        ten_arena_t a2;
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        ten_expr_t *d = ten_decode(&a2, wire, outlen);
+        assert(d != NULL);
+        assert(d->type == TEN_TYPE_STRUCTURE);
+        assert(d->data.structure.nmembers == 2);
+        ten_arena_free(&a2);
+    }
+    PASS();
+
+    /* ── Composition round-trips ───────────────────────────── */
+
+    TEST("encode/decode sequence");
+    {
+        ten_expr_t *s1 = ten_scalar(&a, 0, 1.0, TEN_PREC_8BIT);
+        ten_expr_t *s2 = ten_scalar(&a, 1, 2.0, TEN_PREC_8BIT);
+        ten_expr_t *seq = ten_sequence(&a, s1, s2);
+        assert(ten_encode(seq, wire, sizeof(wire), &outlen) == TEN_OK);
+
+        ten_arena_t a2;
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        ten_expr_t *d = ten_decode(&a2, wire, outlen);
+        assert(d != NULL);
+        assert(d->type == TEN_TYPE_SEQUENCE);
+        assert(d->data.pair.left->type == TEN_TYPE_SCALAR);
+        assert(d->data.pair.right->type == TEN_TYPE_SCALAR);
+        ten_arena_free(&a2);
+    }
+    PASS();
+
+    TEST("encode/decode nesting");
+    {
+        ten_expr_t *env = ten_scalar(&a, 0, 1.0, TEN_PREC_8BIT);
+        uint8_t hash[TEN_HASH_SIZE];
+        memset(hash, 0xFF, TEN_HASH_SIZE);
+        ten_expr_t *pay = ten_ref(&a, hash);
+        ten_expr_t *nest = ten_nest(&a, env, pay);
+        assert(ten_encode(nest, wire, sizeof(wire), &outlen) == TEN_OK);
+
+        ten_arena_t a2;
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        ten_expr_t *d = ten_decode(&a2, wire, outlen);
+        assert(d != NULL);
+        assert(d->type == TEN_TYPE_NESTING);
+        assert(d->data.nesting.envelope->type == TEN_TYPE_SCALAR);
+        assert(d->data.nesting.payload->type == TEN_TYPE_REFERENCE);
+        ten_arena_free(&a2);
+    }
+    PASS();
+
+    TEST("encode/decode product, union, intersect");
+    {
+        ten_expr_t *s1 = ten_scalar(&a, 0, 1.0, TEN_PREC_8BIT);
+        ten_expr_t *s2 = ten_scalar(&a, 1, 2.0, TEN_PREC_8BIT);
+
+        /* Product */
+        ten_expr_t *prod = ten_product(&a, s1, s2);
+        assert(ten_encode(prod, wire, sizeof(wire), &outlen) == TEN_OK);
+        ten_arena_t a2;
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        ten_expr_t *dp = ten_decode(&a2, wire, outlen);
+        assert(dp != NULL && dp->type == TEN_TYPE_PRODUCT);
+        ten_arena_free(&a2);
+
+        /* Union */
+        ten_expr_t *un = ten_union(&a, s1, s2);
+        assert(ten_encode(un, wire, sizeof(wire), &outlen) == TEN_OK);
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        ten_expr_t *du = ten_decode(&a2, wire, outlen);
+        assert(du != NULL && du->type == TEN_TYPE_UNION);
+        ten_arena_free(&a2);
+
+        /* Intersect */
+        ten_expr_t *inter = ten_intersect(&a, s1, s2);
+        assert(ten_encode(inter, wire, sizeof(wire), &outlen) == TEN_OK);
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        ten_expr_t *di = ten_decode(&a2, wire, outlen);
+        assert(di != NULL && di->type == TEN_TYPE_INTERSECT);
+        ten_arena_free(&a2);
+    }
+    PASS();
+
+    /* ── Facet vector round-trip ───────────────────────────── */
+
+    TEST("encode/decode with facet vector");
+    {
+        ten_arena_reset(&a);
+        ten_expr_t *s = ten_scalar(&a, 0, 5.0, TEN_PREC_16BIT);
+        ten_facet_init(&a, s);
+        ten_facet_set(s, TEN_FACET_URGENCY, 0.95, TEN_PREC_64BIT);
+        ten_facet_set(s, TEN_FACET_COST,    0.30, TEN_PREC_64BIT);
+        assert(ten_encode(s, wire, sizeof(wire), &outlen) == TEN_OK);
+
+        ten_arena_t a2;
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        ten_expr_t *d = ten_decode(&a2, wire, outlen);
+        assert(d != NULL);
+        assert(d->type == TEN_TYPE_SCALAR);
+        assert(d->facets != NULL);
+        assert(ten_facet_has(d, TEN_FACET_URGENCY));
+        assert(ten_facet_has(d, TEN_FACET_COST));
+        assert(fabs(ten_facet_get(d, TEN_FACET_URGENCY) - 0.95) < 1e-9);
+        assert(fabs(ten_facet_get(d, TEN_FACET_COST) - 0.30) < 1e-9);
+        assert(!ten_facet_has(d, TEN_FACET_PRIVILEGE));
+        ten_arena_free(&a2);
+    }
+    PASS();
+
+    /* ── Complex nested expression round-trip ──────────────── */
+
+    TEST("encode/decode complex nested expression");
+    {
+        ten_arena_reset(&a);
+        uint8_t hash[TEN_HASH_SIZE];
+        memset(hash, 0xAA, TEN_HASH_SIZE);
+        uint8_t key[32];
+        memset(key, 0xBB, 32);
+
+        ten_expr_t *ref  = ten_ref(&a, hash);
+        ten_expr_t *id   = ten_identity(&a, key, 32);
+        ten_expr_t *asr  = ten_assertion(&a, ref, id, 0.99);
+        ten_expr_t *s1   = ten_scalar(&a, TEN_FACET_URGENCY, 0.8, TEN_PREC_16BIT);
+        ten_expr_t *seq  = ten_sequence(&a, asr, s1);
+        ten_expr_t *env  = ten_scalar(&a, TEN_FACET_COST, 0.1, TEN_PREC_8BIT);
+        ten_expr_t *msg  = ten_nest(&a, env, seq);
+
+        assert(ten_encode(msg, wire, sizeof(wire), &outlen) == TEN_OK);
+
+        ten_arena_t a2;
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        ten_expr_t *d = ten_decode(&a2, wire, outlen);
+        assert(d != NULL);
+        assert(d->type == TEN_TYPE_NESTING);
+        assert(d->data.nesting.envelope->type == TEN_TYPE_SCALAR);
+        assert(d->data.nesting.payload->type == TEN_TYPE_SEQUENCE);
+        ten_expr_t *dseq = d->data.nesting.payload;
+        assert(dseq->data.pair.left->type == TEN_TYPE_ASSERTION);
+        assert(dseq->data.pair.right->type == TEN_TYPE_SCALAR);
+        ten_arena_free(&a2);
+    }
+    PASS();
+
+    /* ── Wire format validation ────────────────────────────── */
+
+    TEST("wire format has correct magic header");
+    {
+        ten_arena_reset(&a);
+        ten_expr_t *s = ten_scalar(&a, 0, 1.0, TEN_PREC_8BIT);
+        assert(ten_encode(s, wire, sizeof(wire), &outlen) == TEN_OK);
+        assert(wire[0] == 'T' && wire[1] == 'e' && wire[2] == 'n' && wire[3] == ':');
+        assert(wire[4] == 1);  /* version */
+    }
+    PASS();
+
+    TEST("decode rejects bad magic");
+    {
+        uint8_t bad[64] = { 'B', 'a', 'd', '!', 1, 0, 0, 0, 0 };
+        ten_arena_t a2;
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        assert(ten_decode(&a2, bad, sizeof(bad)) == NULL);
+        ten_arena_free(&a2);
+    }
+    PASS();
+
+    TEST("decode rejects truncated input");
+    {
+        ten_arena_t a2;
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        assert(ten_decode(&a2, wire, 4) == NULL);  /* less than envelope */
+        ten_arena_free(&a2);
+    }
+    PASS();
+
+    TEST("encode returns BUFFER_TOO_SMALL for tiny buffer");
+    {
+        ten_arena_reset(&a);
+        ten_expr_t *s = ten_scalar(&a, 0, 1.0, TEN_PREC_8BIT);
+        size_t tiny_len;
+        assert(ten_encode(s, wire, 5, &tiny_len) == TEN_ERROR_BUFFER_TOO_SMALL);
+    }
+    PASS();
+
+    TEST("encode rejects NULL arguments");
+    {
+        assert(ten_encode(NULL, wire, sizeof(wire), &outlen) == TEN_ERROR_NULL_ARG);
+        ten_arena_reset(&a);
+        ten_expr_t *s = ten_scalar(&a, 0, 1.0, TEN_PREC_8BIT);
+        assert(ten_encode(s, NULL, sizeof(wire), &outlen) == TEN_ERROR_NULL_ARG);
+        assert(ten_encode(s, wire, sizeof(wire), NULL) == TEN_ERROR_NULL_ARG);
+    }
+    PASS();
+
+    TEST("decoded expression passes validation");
+    {
+        ten_arena_reset(&a);
+        ten_expr_t *s1 = ten_scalar(&a, 0, 1.0, TEN_PREC_8BIT);
+        ten_expr_t *s2 = ten_scalar(&a, 1, 2.0, TEN_PREC_16BIT);
+        ten_expr_t *seq = ten_sequence(&a, s1, s2);
+        assert(ten_encode(seq, wire, sizeof(wire), &outlen) == TEN_OK);
+
+        ten_arena_t a2;
+        ten_arena_init(&a2, TEN_DEFAULT_ARENA_SIZE);
+        ten_expr_t *d = ten_decode(&a2, wire, outlen);
+        assert(d != NULL);
+        assert(ten_is_valid(d));
+        ten_arena_free(&a2);
+    }
+    PASS();
+
+    ten_arena_free(&a);
+}
+
+/* ══════════════════════════════════════════════════════════
  *  Main
  * ══════════════════════════════════════════════════════════ */
 
@@ -478,6 +865,9 @@ int main(void) {
     test_validation();
     printf("\n[Utility]\n");
     test_utility();
+
+    printf("\n[Serialization]\n");
+    test_serialization();
 
     printf("\n══════════════════════════════════════════\n");
     printf("  Results: %d/%d passed\n", tests_passed, tests_run);

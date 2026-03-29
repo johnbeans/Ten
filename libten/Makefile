@@ -23,7 +23,8 @@ SRCS = $(SRC_DIR)/arena.c \
        $(SRC_DIR)/compose.c \
        $(SRC_DIR)/facets.c \
        $(SRC_DIR)/validate.c \
-       $(SRC_DIR)/util.c
+       $(SRC_DIR)/util.c \
+       $(SRC_DIR)/serialize.c
 
 OBJS = $(patsubst $(SRC_DIR)/%.c,$(BUILD)/%.o,$(SRCS))
 LIB      = $(BUILD)/libten.a

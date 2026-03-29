@@ -156,7 +156,8 @@ static int describe_recursive(const ten_expr_t *expr,
 
     case TEN_TYPE_NESTING:
         n = snprintf(buf + written, bufsize - written, "Nesting\n");
-        if (n > 0) written += n;        written += describe_recursive(expr->data.nesting.envelope,
+        if (n > 0) written += n;
+        written += describe_recursive(expr->data.nesting.envelope,
             buf + written, bufsize - written, depth + 1);
         written += describe_recursive(expr->data.nesting.payload,
             buf + written, bufsize - written, depth + 1);

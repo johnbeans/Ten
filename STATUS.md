@@ -35,7 +35,7 @@ Location on disk: /Users/johnbeans/Ten
 
 ## libten Implementation Status
 
-### COMPLETE — compiles clean, 49/49 tests pass
+### COMPLETE — compiles clean, 69/69 tests pass
 ```
 libten/
 ├── include/ten.h          (295 lines) — Full public API
@@ -47,32 +47,28 @@ libten/
 │   sequence(⊕), product(⊗), nest(λ), union(∪), intersect(∩), project(π)
 ├── src/facets.c           — Facet vector ops (init/set/get/has/filter)
 ├── src/validate.c         — Recursive expression validation
+├── src/serialize.c        — Binary wire format v1 (encode/decode)
+│   Precision-aware scalar encoding (1–64 bits), facet vectors,
+│   recursive expression tree, "Ten:" magic header envelope
 ├── src/util.c             — type_name, error_string, op_name, describe
-├── tests/test_main.c      — 49 tests covering all of the above
+├── tests/test_main.c      — 69 tests covering all of the above
 ├── Makefile               — `make`, `make test`, `make debug` (ASan+UBSan)
 └── build/libten.a         — Static library output
 ```
 ### NOT YET IMPLEMENTED
-1. **Serialization (encode/decode)** — Wire format for binary encoding.
-   Needs decisions on:
-   - Scalar encoding: varint vs fixed-width+precision-tag vs IEEE 754 subset
-   - Facet vector layout: fixed-position vs tagged with dimension IDs
-   - Expression tree: array-of-structs vs pointer-based (arena makes both safe)
-   - Hash algorithm: SHA-256 (default assumption) vs BLAKE3 (faster)
-   Strategy: benchmark before committing.
+1. **Python bindings (tenlang)** — ctypes/cffi wrapper around libten.
+   ~200 lines. libten serialization is complete; bindings can now do
+   full round-trip encode/decode.
 
-2. **Python bindings (tenlang)** — ctypes/cffi wrapper around libten.
-   ~200 lines. Blocked on: encode/decode (need wire format for round-trip).
-
-3. **ten-mcp-server** — Python MCP server wrapping tenlang.
+2. **ten-mcp-server** — Python MCP server wrapping tenlang.
    Blocked on: Python bindings.
 
-4. **The Canonica** — Token registry service.
+3. **The Canonica** — Token registry service.
    Blocked on: MCP server (needs real usage telemetry).
 
-5. **Validation (Phase 1.5)** — Industry stress tests. Blocked on: libten
-   serialization (need encode/decode for round-trip benchmarks, but the
-   in-memory algebra is ready for domain library development now).
+4. **Validation (Phase 1.5)** — Industry stress tests. libten is fully
+   ready (all kernel types, composition, facets, serialization). Next
+   step is Python bindings or direct C-level domain libraries.
 
 ## Key Design Decisions (already made)
 - Messages carry metadata, not content. Payloads are SHA-256 References.
@@ -117,5 +113,7 @@ ten_facet_get(expr, dim) → double
 ten_facet_has(expr, dim) → bool
 ten_facet_filter(expr, &filter) → bool
 
-// Not yet: ten_encode(), ten_decode()
+// Serialization (wire format v1)
+ten_encode(expr, buf, bufsize, &outlen)   // → TEN_OK or error
+ten_decode(&a, buf, len)                  // → ten_expr_t* or NULL
 ```

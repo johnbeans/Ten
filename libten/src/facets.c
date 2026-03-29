@@ -50,7 +50,8 @@ ten_error_t ten_facet_set(ten_expr_t *expr, uint16_t dimension,
 /* ── Get a facet value ────────────────────────────────────── */
 
 double ten_facet_get(const ten_expr_t *expr, uint16_t dimension) {
-    if (!expr || !expr->facets) return 0.0;    if (dimension >= TEN_MAX_FACETS) return 0.0;
+    if (!expr || !expr->facets) return 0.0;
+    if (dimension >= TEN_MAX_FACETS) return 0.0;
     if (!expr->facets->set[dimension]) return 0.0;
     return expr->facets->values[dimension];
 }

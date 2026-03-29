@@ -17,7 +17,7 @@ See **[VALIDATION.md](VALIDATION.md)** for the full validation design, token eco
 - [x] Type kernel candidates identified
 - [x] Composition algebra defined
 - [x] Known gaps and open critiques documented (Appendix B)
-- [x] libten C core — 6 kernel types, 6 composition ops, facets, validation (49/49 tests pass)
+- [x] libten C core — 6 kernel types, 6 composition ops, facets, validation, serialization (69/69 tests pass)
 - [ ] Secure tenlang.org domain
 - [ ] Formal review of kernel minimality and sufficiency
 
@@ -25,8 +25,11 @@ See **[VALIDATION.md](VALIDATION.md)** for the full validation design, token eco
 The core deliverable is a **Ten MCP server** — the primary adoption vehicle. But the MCP server is a means, not the end. The end is having a working system that can be measured against the status quo.
 
 ### libten Completion
-- [ ] Binary serialization / deserialization (wire format)
-- [ ] Benchmark: varint vs. fixed-width vs. IEEE 754 subset for scalar encoding
+- [x] Binary serialization / deserialization (wire format v1)
+      Precision-aware encoding: 1-bit → 1 byte, 4/8-bit → 1 byte,
+      16-bit → 2 bytes, 32-bit → 4 bytes (float), 64-bit → 8 bytes (double).
+      Facet vectors use tagged layout (dim_id + precision + 8B value).
+      SHA-256 assumed for Reference hashes (32 bytes on wire).
 - [ ] Benchmark: SHA-256 vs. BLAKE3 for hash performance
 
 ### Python Core Library (`tenlang`)
