@@ -1,5 +1,5 @@
 # Ten Implementation Status
-# Last updated: 2026-03-29
+# Last updated: 2026-03-29 (Python bindings added)
 # Read this FIRST in any new chat to avoid re-reading 93KB of docs.
 
 ## Strategic Priority
@@ -53,22 +53,34 @@ libten/
 ├── src/util.c             — type_name, error_string, op_name, describe
 ├── tests/test_main.c      — 69 tests covering all of the above
 ├── Makefile               — `make`, `make test`, `make debug` (ASan+UBSan)
-└── build/libten.a         — Static library output
+└── build/                 — libten.a (static) + libten.so/.dylib (shared)
 ```
+
+### tenlang (Python bindings) — COMPLETE, 53/53 tests pass
+```
+tenlang/
+├── __init__.py            — Package exports: Arena, Expr, encode, decode, constants
+├── _ffi.py                — ctypes wrapper: struct definitions, library loading,
+│                            function signatures for all 30+ C functions
+├── types.py               — Pythonic API: Arena (context manager), Expr (property
+│                            accessors), encode()/decode(), TenError exceptions
+└── tests/
+    └── test_tenlang.py    — 53 pytest tests mirroring the C test suite
+```
+```
+pyproject.toml             — Package metadata for `pip install tenlang`
+```
+
 ### NOT YET IMPLEMENTED
-1. **Python bindings (tenlang)** — ctypes/cffi wrapper around libten.
-   ~200 lines. libten serialization is complete; bindings can now do
-   full round-trip encode/decode.
+1. **ten-mcp-server** — Python MCP server wrapping tenlang.
+   Now unblocked — Python bindings are complete with full encode/decode.
 
-2. **ten-mcp-server** — Python MCP server wrapping tenlang.
-   Blocked on: Python bindings.
-
-3. **The Canonica** — Token registry service.
+2. **The Canonica** — Token registry service.
    Blocked on: MCP server (needs real usage telemetry).
 
-4. **Validation (Phase 1.5)** — Industry stress tests. libten is fully
-   ready (all kernel types, composition, facets, serialization). Next
-   step is Python bindings or direct C-level domain libraries.
+3. **Validation (Phase 1.5)** — Industry stress tests. The full stack
+   (libten + tenlang) is ready for domain library development and
+   measurement against JSON + LLM baselines.
 
 ## Key Design Decisions (already made)
 - Messages carry metadata, not content. Payloads are SHA-256 References.
@@ -79,10 +91,15 @@ libten/
 
 ## Build & Test
 ```
+# C core
 cd /Users/johnbeans/Ten/libten
-make        # builds build/libten.a
-make test   # builds and runs 49 tests
+make        # builds build/libten.a + libten.so (or .dylib on macOS)
+make test   # builds and runs 69 C tests
 make debug  # ASan + UBSan build
+
+# Python bindings
+cd /Users/johnbeans/Ten
+python -m pytest tenlang/tests/ -v   # runs 53 Python tests
 ```
 
 ## C API Quick Reference (for new chat context)
@@ -116,4 +133,41 @@ ten_facet_filter(expr, &filter) → bool
 // Serialization (wire format v1)
 ten_encode(expr, buf, bufsize, &outlen)   // → TEN_OK or error
 ten_decode(&a, buf, len)                  // → ten_expr_t* or NULL
+```
+
+## Python API Quick Reference (for new chat context)
+```python
+from tenlang import Arena, encode, decode
+from tenlang import TEN_FACET_URGENCY, TEN_OP_QUERY, TEN_PREC_16BIT
+
+with Arena() as a:
+    # Kernel constructors (all return Expr)
+    s = a.scalar(dimension, value, precision=TEN_PREC_64BIT)
+    r = a.ref(hash_bytes_32)
+    i = a.identity(pubkey_bytes)
+    asr = a.assertion(claim_expr, who_expr, confidence)
+    op = a.operation(verb, [arg1, arg2])
+    st = a.structure([member1, member2])
+
+    # Composition (all return Expr, all CLOSED)
+    a.sequence(left, right)    # ⊕
+    a.product(left, right)     # ⊗
+    a.nest(envelope, payload)  # λ
+    a.union(left, right)       # ∪
+    a.intersect(left, right)   # ∩
+    a.project(expr, [dim1, dim2])  # π
+
+    # Facets
+    expr.set_facet(dim, value, precision=TEN_PREC_64BIT)
+    expr.get_facet(dim)        # → float
+    expr.has_facet(dim)        # → bool
+    expr.matches_filter([(dim, op, threshold), ...])
+
+    # Serialization
+    wire = encode(expr)        # → bytes
+
+with Arena() as a2:
+    decoded = decode(a2, wire) # → Expr
+    decoded.is_valid()         # → bool
+    decoded.describe()         # → str (debug output)
 ```

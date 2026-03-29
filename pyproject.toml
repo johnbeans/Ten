@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tenlang"
+version = "0.1.0"
+description = "Python bindings for the Ten formal algebra"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Jolly Logic, LLC", email = "john@jollylogic.com"},
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Libraries",
+]
+
+[project.urls]
+Homepage = "https://tenlang.org"
+Repository = "https://github.com/johnbeans/Ten"
+
+[tool.setuptools.packages.find]
+include = ["tenlang*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tenlang/tests"]

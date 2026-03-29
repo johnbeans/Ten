@@ -32,13 +32,18 @@ The core deliverable is a **Ten MCP server** — the primary adoption vehicle. B
       SHA-256 assumed for Reference hashes (32 bytes on wire).
 - [ ] Benchmark: SHA-256 vs. BLAKE3 for hash performance
 
-### Python Core Library (`tenlang`)
-- [ ] Kernel type implementations (Scalar, Reference, Identity, Assertion, Operation, Structure)
-- [ ] Composition operations (Sequence, Product, Projection, Nesting, Union, Intersection)
-- [ ] Facet vector encoding and extraction
-- [ ] Variable-resolution scalar encoding
-- [ ] Expression validation (closure property enforcement)
-- [ ] Self-description: τ-expression generation and parsing
+### Python Core Library (`tenlang`) — COMPLETE, 53/53 tests pass
+- [x] ctypes wrapper (_ffi.py): struct definitions, library loading, all function signatures
+- [x] Pythonic API (types.py): Arena context manager, Expr with property accessors, encode/decode
+- [x] All 6 kernel type constructors (Scalar, Reference, Identity, Assertion, Operation, Structure)
+- [x] All 6 composition operations (Sequence, Product, Projection, Nesting, Union, Intersection)
+- [x] Facet vector operations (init, set, get, has, filter)
+- [x] Variable-resolution scalar encoding (1-bit through 64-bit via libten)
+- [x] Expression validation (closure property enforcement)
+- [x] Full binary serialization round-trip (encode/decode via wire format v1)
+- [x] 53 pytest tests covering all of the above
+- [x] pyproject.toml for `pip install tenlang`
+- [ ] Self-description: τ-expression generation and parsing (deferred to Phase 2)
 
 ### Ten MCP Server
 - [ ] MCP tool: `ten.encode` — structured data → Ten expression

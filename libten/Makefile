@@ -1,7 +1,7 @@
 # Makefile for libten — Ten formal algebra library
 #
 # Targets:
-#   make          — build libten.a (static library)
+#   make          — build libten.a (static) and libten.so/dylib (shared)
 #   make test     — build and run all tests
 #   make clean    — remove build artifacts
 #   make debug    — build with debug symbols and sanitizers
@@ -26,22 +26,44 @@ SRCS = $(SRC_DIR)/arena.c \
        $(SRC_DIR)/util.c \
        $(SRC_DIR)/serialize.c
 
-OBJS = $(patsubst $(SRC_DIR)/%.c,$(BUILD)/%.o,$(SRCS))
+OBJS     = $(patsubst $(SRC_DIR)/%.c,$(BUILD)/%.o,$(SRCS))
+PIC_OBJS = $(patsubst $(SRC_DIR)/%.c,$(BUILD)/%_pic.o,$(SRCS))
 LIB      = $(BUILD)/libten.a
 
-.PHONY: all test clean debug
+# Detect OS for shared library extension
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+    SHARED   = $(BUILD)/libten.dylib
+    SOFLAGS  = -dynamiclib -install_name @rpath/libten.dylib
+else
+    SHARED   = $(BUILD)/libten.so
+    SOFLAGS  = -shared
+endif
 
-all: $(LIB)
+.PHONY: all test clean debug shared
+
+all: $(LIB) $(SHARED)
 
 $(BUILD):
 	mkdir -p $(BUILD)
 
+# Static library objects
 $(BUILD)/%.o: $(SRC_DIR)/%.c $(INC_DIR)/ten.h $(SRC_DIR)/ten_internal.h | $(BUILD)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+# Position-independent objects for shared library
+$(BUILD)/%_pic.o: $(SRC_DIR)/%.c $(INC_DIR)/ten.h $(SRC_DIR)/ten_internal.h | $(BUILD)
+	$(CC) $(CFLAGS) -fPIC -c $< -o $@
 
 $(LIB): $(OBJS)
 	$(AR) rcs $@ $^
 	@echo "Built $(LIB)"
+
+$(SHARED): $(PIC_OBJS)
+	$(CC) $(SOFLAGS) -o $@ $^
+	@echo "Built $(SHARED)"
+
+shared: $(SHARED)
 
 # ── Tests ─────────────────────────────────────────────────
 
