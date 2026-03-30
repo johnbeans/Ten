@@ -107,4 +107,4 @@ Use `ten_filter` to evaluate expressions against facet criteria (e.g., "urgency 
 
 ## License
 
-Apache-2.0 — Jolly Logic, LLC
+Apache-2.0 — John Beans

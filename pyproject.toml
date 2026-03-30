@@ -10,7 +10,7 @@ readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.9"
 authors = [
-    {name = "Jolly Logic, LLC", email = "john@jollylogic.com"},
+    {name = "John Beans", email = "john@jollylogic.com"},
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
