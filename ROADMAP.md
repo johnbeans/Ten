@@ -45,14 +45,14 @@ The core deliverable is a **Ten MCP server** — the primary adoption vehicle. B
 - [x] pyproject.toml for `pip install tenlang`
 - [ ] Self-description: τ-expression generation and parsing (deferred to Phase 2)
 
-### Ten MCP Server
-- [ ] MCP tool: `ten.encode` — structured data → Ten expression
-- [ ] MCP tool: `ten.decode` — Ten expression → human-readable description
-- [ ] MCP tool: `ten.compose` — combine two Ten expressions
-- [ ] MCP tool: `ten.project` — extract dimensions from an expression
-- [ ] MCP tool: `ten.filter` — evaluate a Ten expression against filter criteria
-- [ ] MCP tool: `ten.describe` — return the τ-structure of an expression
-- [ ] MCP tool: `ten.verify` — check assertions and trust chains
+### Ten MCP Server — COMPLETE, 31/31 tests pass
+- [x] MCP tool: `ten.encode` — structured data → Ten expression
+- [x] MCP tool: `ten.decode` — Ten expression → human-readable description
+- [x] MCP tool: `ten.compose` — combine two Ten expressions
+- [x] MCP tool: `ten.project` — extract dimensions from an expression
+- [x] MCP tool: `ten.filter` — evaluate a Ten expression against filter criteria
+- [x] MCP tool: `ten.describe` — return the τ-structure of an expression
+- [x] MCP tool: `ten.verify` — check assertions and trust chains
 - [ ] Publish to MCP registry for one-click installation
 
 ### Ten REST API

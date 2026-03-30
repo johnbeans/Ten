@@ -1,5 +1,5 @@
 # Ten Implementation Status
-# Last updated: 2026-03-29 (Python bindings added)
+# Last updated: 2026-03-29 (MCP server added)
 # Read this FIRST in any new chat to avoid re-reading 93KB of docs.
 
 ## Strategic Priority
@@ -71,16 +71,32 @@ tenlang/
 pyproject.toml             — Package metadata for `pip install tenlang`
 ```
 
+### ten-mcp-server — COMPLETE, 31/31 tests pass
+```
+ten-mcp-server/
+├── __init__.py            — Package marker
+├── __main__.py            — Entry point: python -m ten-mcp-server
+├── server.py              — FastMCP server with 7 tools:
+│   ten_encode             — structured dict → Ten wire format (b64/hex)
+│   ten_decode             — wire format → structured dict + description
+│   ten_compose            — combine two expressions (seq/prod/nest/union/inter)
+│   ten_project            — extract facet dimensions (SELECT columns)
+│   ten_filter             — batch filter by facet criteria (inbox processing)
+│   ten_describe           — human-readable tree dump + structural analysis
+│   ten_verify             — structural integrity check + assertion details
+└── tests/
+    └── test_tools.py      — 31 tests covering all 7 tools
+```
+
 ### NOT YET IMPLEMENTED
-1. **ten-mcp-server** — Python MCP server wrapping tenlang.
-   Now unblocked — Python bindings are complete with full encode/decode.
+1. **MCP registry publication** — Publish ten-mcp-server for one-click install.
 
 2. **The Canonica** — Token registry service.
-   Blocked on: MCP server (needs real usage telemetry).
+   Blocked on: real usage telemetry from MCP server deployment.
 
 3. **Validation (Phase 1.5)** — Industry stress tests. The full stack
-   (libten + tenlang) is ready for domain library development and
-   measurement against JSON + LLM baselines.
+   (libten → tenlang → ten-mcp-server) is ready. Next step is building
+   domain libraries and measuring against JSON + LLM baselines.
 
 ## Key Design Decisions (already made)
 - Messages carry metadata, not content. Payloads are SHA-256 References.
