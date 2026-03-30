@@ -4,7 +4,7 @@
 
 Ten makes a bold claim: that a formal algebra can handle machine-to-machine communication more efficiently than natural language + LLM inference, and more robustly than JSON + custom code. **Proving this claim — transparently, with measured data, including where it fails — is the most important goal of the project.**
 
-Everything in this roadmap serves that goal. The reference implementation exists to make measurement possible. The validation scenarios exist to make the measurements honest. The Canonica exists to demonstrate the long-term ecosystem value. If the measurements don't support the claim, the project should say so and recalibrate — not rationalize.
+Everything in this roadmap serves that goal. The reference implementation exists to make measurement possible. The validation scenarios exist to make the measurements honest. Ten Canonica exists to demonstrate the long-term ecosystem value. If the measurements don't support the claim, the project should say so and recalibrate — not rationalize.
 
 The status quo is not weak. LLMs are cheap, fast, and getting cheaper. JSON is universal, well-tooled, and understood by everyone. Ten must demonstrate concrete, measurable advantages that justify its existence — not just in theory, but in token counts, dollar costs, latency, determinism, and composability. The alternative is an elegant algebra that nobody needs.
 
@@ -96,8 +96,8 @@ Full design: **[VALIDATION.md](VALIDATION.md)**
 
 **Gate decision:** If the validation shows that Ten's advantages over JSON + domain code are marginal, the project should focus on the specific scenarios where algebraic composition, closure, and facet vectors provide measurable value — not pretend Ten is universally better.
 
-## Phase 2: Canonica (Living Registry)
-- [ ] Minimal Canonica server (type registry, slang registry)
+## Phase 2: Ten Canonica (Living Registry)
+- [ ] Minimal Ten Canonica server (type registry, slang registry)
 - [ ] Seed with domain type libraries from Phase 1.5 validation
 - [ ] Telemetry ingestion endpoint
 - [ ] Equivalence detection engine (algebraic isomorphism checking)
@@ -119,7 +119,7 @@ Full design: **[VALIDATION.md](VALIDATION.md)**
 - [ ] Conditional expression support (B.11 resolution)
 - [ ] Semantic grounding framework (calibration anchors for scalars)
 - [ ] Sybil-resistant telemetry (mechanism design for honest reporting)
-- [ ] Canonica federation (decentralized operation)
+- [ ] Ten Canonica federation (decentralized operation)
 
 ## Research Track (Parallel)
 These are ongoing formal research problems, not gated by implementation phases:

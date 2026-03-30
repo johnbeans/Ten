@@ -28,7 +28,7 @@ Ten's implementation is split into three components with distinct performance pr
          │         telemetry reports           │
          ▼                                    │
 ┌─────────────────────────────┐               │
-│       The Canonica          │               │
+│      Ten Canonica           │               │
 │  (Python + PostgreSQL)      │               │
 │  thecanonica.org            │               │
 │  hosted on Railway/Fly.io   │               │
@@ -169,14 +169,14 @@ The REST API is optionally deployable as a service for non-MCP clients, but can 
 
 ---
 
-## Component 3: The Canonica (Python + PostgreSQL)
+## Component 3: Ten Canonica (Python + PostgreSQL)
 
 ### What it does
 
 The living registry of Ten's vocabulary. Collects anonymized usage telemetry from participating AIs. Detects algebraic equivalences between independently invented constructs. Publishes canonicalization guidance (which constructs are canonical, which are deprecated, which slang tokens are minted). Serves as the query endpoint for AIs encountering unfamiliar constructs.
 ### Why it's not performance-critical
 
-**The Canonica is never on the critical path of any message.** No AI waits for the Canonica before sending or receiving a Ten message. AIs consult the Canonica periodically to update their local vocabulary tables — like pulling a git repo. They report telemetry in the background. The equivalence detection engine runs as a batch job, not in real-time. This means the Canonica can be architecturally simple and modestly resourced.
+**Ten Canonica is never on the critical path of any message.** No AI waits for Ten Canonica before sending or receiving a Ten message. AIs consult Ten Canonica periodically to update their local vocabulary tables — like pulling a git repo. They report telemetry in the background. The equivalence detection engine runs as a batch job, not in real-time. This means Ten Canonica can be architecturally simple and modestly resourced.
 
 ### Technology
 
@@ -191,14 +191,14 @@ This is the one cloud-hosted component. For the bootstrap phase, a single instan
 ### Interaction pattern
 
 ```
-AI ──(background)──► Canonica: "Here's my usage telemetry for the past hour"
-AI ──(periodic)────► Canonica: "Give me updated canonical forms since timestamp T"
-AI ──(on demand)───► Canonica: "I encountered construct X — what is it?"
-Canonica ──(batch)─► Canonica: "Run equivalence detection on new telemetry"
-Canonica ──(batch)─► Canonica: "Mint slang tokens for high-frequency compounds"
+AI ──(background)──► Ten Canonica: "Here's my usage telemetry for the past hour"
+AI ──(periodic)────► Ten Canonica: "Give me updated canonical forms since timestamp T"
+AI ──(on demand)───► Ten Canonica: "I encountered construct X — what is it?"
+Ten Canonica ──(batch)─► Ten Canonica: "Run equivalence detection on new telemetry"
+Ten Canonica ──(batch)─► Ten Canonica: "Mint slang tokens for high-frequency compounds"
 ```
 
-None of these interactions are latency-sensitive. The AI never blocks waiting for the Canonica to respond before processing a message.
+None of these interactions are latency-sensitive. The AI never blocks waiting for Ten Canonica to respond before processing a message.
 ---
 
 ## Package Structure
@@ -295,7 +295,7 @@ These are design decisions that need to be resolved during implementation, not b
 | Memory model | Arena allocation | One alloc, one free, no leaks, bounded by hard limits |
 | Content in messages | Never inlined, always referenced | Bounded message sizes, predictable memory, efficient caching |
 | MCP server / REST API | Python | Ecosystem convenience, not performance-critical (wrapper only) |
-| The Canonica | Python + PostgreSQL | Not on the critical path, standard web service, simple deployment |
+| Ten Canonica | Python + PostgreSQL | Not on the critical path, standard web service, simple deployment |
 | Canonica hosting | Railway or Fly.io | Cheap, simple, sufficient for bootstrap phase |
 | MCP server hosting | Local (user's machine) | MCP architecture requires it; no cloud hosting needed |
 | Build order | libten → Python bindings → MCP server → Canonica | Each phase has a clear deliverable and builds on the previous |

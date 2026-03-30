@@ -29,7 +29,7 @@ If Ten's advantages turn out to be narrow, the project will say so. Intellectual
 
 **Slang.** The most common compound concepts automatically earn short encodings. "Encrypted, private, minimal detail, verified source" becomes a single token. Slang composes algebraically — unlike human idioms.
 
-**Self-evolving.** A built-in evolution mechanism (the Canonica) collects usage telemetry, detects equivalent constructs, and publishes optimized canonical forms. Ten provably converges toward the Shannon limit on AI-to-AI communication efficiency.
+**Self-evolving.** A built-in evolution mechanism (Ten Canonica) collects usage telemetry, detects equivalent constructs, and publishes optimized canonical forms. Ten provably converges toward the Shannon limit on AI-to-AI communication efficiency.
 
 **Not a protocol — a language.** Ten rides *inside* existing protocols (MCP, A2A, ACP) as the payload encoding. It completes them rather than competing with them.
 
@@ -67,4 +67,4 @@ Apache 2.0 — see [LICENSE](LICENSE).
 ---
 
 **Website:** [tenlang.org](https://tenlang.org)
-**The Canonica:** [thecanonica.org](https://thecanonica.org)
+**Ten Canonica:** [tencanonica.org](https://tencanonica.org)

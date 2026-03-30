@@ -22,7 +22,7 @@ encode/decode — it's struct packing, array comparisons, tree walks.
 - **libten** (C) — Core algebra library. Arena-allocated, zero deps.
 - **Python bindings** — Thin ctypes/cffi wrapper around libten.
 - **ten-mcp-server** (Python) — MCP tool exposure. No AI inference.
-- **The Canonica** (Python + PostgreSQL) — Living token registry.
+- **Ten Canonica** (Python + PostgreSQL) — Living token registry.
 
 ## Repo: github.com/johnbeans/Ten
 Location on disk: /Users/johnbeans/Ten
@@ -118,7 +118,7 @@ ten_rest_api/
 
 2. **WebSocket support** — Streaming Ten message exchanges over WS.
 
-3. **The Canonica** — Token registry service.
+3. **Ten Canonica** — Token registry service.
    Blocked on: real usage telemetry from MCP server deployment.
 
 4. **Validation (Phase 1.5)** — Industry stress tests. The full stack

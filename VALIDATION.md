@@ -75,7 +75,7 @@ Each leg of each position is a Ten message. The encoding below uses the C API fr
 
 #### Encoding Conventions (Domain Type Library)
 
-Before encoding positions, we define the domain's composed types. These are NOT new kernel types — they are compositions of existing kernel types that would be registered in the Canonica as the "derivatives" domain library.
+Before encoding positions, we define the domain's composed types. These are NOT new kernel types — they are compositions of existing kernel types that would be registered in Ten Canonica as the "derivatives" domain library.
 
 ```
 Instrument ≡ τ(
@@ -714,11 +714,11 @@ Here's the reuse argument made concrete:
 | Audit: prove the risk numbers are correct | Cannot audit LLM reasoning deterministically | Unit test: encode known positions, assert known outputs |
 | Regulatory requirement: show your methodology | "We asked an AI" (good luck with that) | "Here's the 95 lines of C" (auditable, testable, versioned) |
 
-**4. The domain library IS the Canonica contribution.**
+**4. The domain library IS the Ten Canonica contribution.**
 
-This is where the ecosystem argument closes. When someone writes the derivatives computation library — the 95 lines above — it doesn't live in their private codebase. It gets registered in the Canonica alongside the type definitions (Instrument, Trade, Strategy). The Canonica entry for `Strategy` doesn't just say "this is a structure of legs." It says "here is the canonical computation library: `compute_net_premium()`, `compute_risk_profile()`, `stamp_risk_facets()`."
+This is where the ecosystem argument closes. When someone writes the derivatives computation library — the 95 lines above — it doesn't live in their private codebase. It gets registered in Ten Canonica alongside the type definitions (Instrument, Trade, Strategy). The Ten Canonica entry for `Strategy` doesn't just say "this is a structure of legs." It says "here is the canonical computation library: `compute_net_premium()`, `compute_risk_profile()`, `stamp_risk_facets()`."
 
-The next person who needs derivatives analytics doesn't write any of this. They install the Ten MCP server, which ships with the Canonica-registered domain libraries, and call `ten.encode()` with their positions. The facets come out pre-computed.
+The next person who needs derivatives analytics doesn't write any of this. They install the Ten MCP server, which ships with Ten Canonica-registered domain libraries, and call `ten.encode()` with their positions. The facets come out pre-computed.
 
 This is the Ten value proposition, stated precisely: **the domain expertise gets written once as a small, testable, deterministic library of composable functions that operate on typed structures. The library is registered, shared, and reused. The alternative — sending natural language to an LLM every time — is per-query, non-deterministic, expensive, unauditable, and non-composable.**
 
@@ -870,13 +870,13 @@ Option B: An LLM assists in writing it (realistic for Ten).
   TOTAL: ~15,000 tokens, ~$0.15-0.50 in API costs
   Plus ~2-4 hours of human review time
 
-Option C: The library already exists in the Canonica.
+Option C: The library already exists in Ten Canonica.
   Download, install: 0 tokens, 0 developer time
   This is the steady-state scenario. NOT the bootstrap scenario.
 ─────────────────────────────────────────────────────────────────
 ```
 
-**Critical honesty point:** Option C is the *promise*. Options A and B are the *reality* during validation. The document must not conflate them. During Phase 1.5, every domain library is Option A or B. The Canonica's value proposition — that someone already wrote this — is only credible after the libraries demonstrably exist and work.
+**Critical honesty point:** Option C is the *promise*. Options A and B are the *reality* during validation. The document must not conflate them. During Phase 1.5, every domain library is Option A or B. Ten Canonica's value proposition — that someone already wrote this — is only credible after the libraries demonstrably exist and work.
 
 ### Breakeven Analysis
 
@@ -1140,7 +1140,7 @@ Ten's specific contributions, which the validation must demonstrate separately, 
 
 4. **Self-description (τ) for interoperability.** A Ten expression carries its own schema. A JSON blob requires a separate schema definition (JSON Schema, OpenAPI, etc.) that travels alongside it. The validation must show a case where τ enables an agent to process an expression it hasn't seen before — the "novel strategy" test.
 
-5. **The Canonica convergence story.** This is Ten's long-term value: domain libraries get shared, canonicalized, and optimized over time. JSON schemas don't have an equivalent ecosystem mechanism. This is harder to validate in Phase 1.5 but should be projected honestly.
+5. **Ten Canonica convergence story.** This is Ten's long-term value: domain libraries get shared, canonicalized, and optimized over time. JSON schemas don't have an equivalent ecosystem mechanism. This is harder to validate in Phase 1.5 but should be projected honestly.
 
 **If Ten's contributions beyond "a schema" turn out to be marginal for a given scenario, the validation must say so.** The goal is not to prove Ten is always better. The goal is to map precisely *where and when* Ten's algebraic properties provide value that a simpler encoding cannot.
 
@@ -1203,7 +1203,7 @@ If the validation succeeds:
 
 5. **Nesting enables document-oriented workflows:** The supply chain scenario proves that λ (nesting) handles real-world document hierarchies where an envelope (shipment summary) wraps a payload (full document set) and intermediaries can route without parsing the payload.
 
-6. **The Canonica value proposition crystallizes:** Each scenario demonstrates domain-specific composed types (Instrument, Trade, Position, Strategy for derivatives; ShipmentDocument, LetterOfCredit for trade finance; TrialProtocol, AdverseEvent for clinical). These are exactly what the Canonica would register, canonicalize, and optimize over time. The validation scenarios become the Canonica's seed data.
+6. **Ten Canonica value proposition crystallizes:** Each scenario demonstrates domain-specific composed types (Instrument, Trade, Position, Strategy for derivatives; ShipmentDocument, LetterOfCredit for trade finance; TrialProtocol, AdverseEvent for clinical). These are exactly what Ten Canonica would register, canonicalize, and optimize over time. The validation scenarios become Ten Canonica's seed data.
 
 7. **Longitudinal composition exposes the LLM's structural weakness:** For temporal analyses spanning months of transactions, the LLM must either fit everything in one context window (impossible at scale) or chain lossy summaries (non-deterministic, error-compounding). Ten's approach — fold over stored expressions, compose partial results algebraically — is lossless, deterministic, and scales linearly. The variance measurement (same input, different P&L on each LLM run) is the single most compelling data point for any audience that cares about correctness.
 
@@ -1213,7 +1213,7 @@ If the validation succeeds:
 
 This validation phase slots between Phase 1 (Reference Implementation) and Phase 2 (Canonica), because:
 - It requires libten to be functional (Phase 1 prerequisite)
-- It produces the domain type libraries that seed the Canonica (Phase 2 input)
+- It produces the domain type libraries that seed Ten Canonica (Phase 2 input)
 - It generates the most compelling adoption argument: "Here's what Ten does for YOUR industry"
 
 ```

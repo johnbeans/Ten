@@ -239,7 +239,7 @@ This τ-expression says: "I am a product of an urgency scalar, a cost scalar, an
 
 ### The Bootstrap Property
 
-Self-description resolves the chicken-and-egg problem. How does an AI learn Ten? It reads the Canonica, which is itself a Ten document: a collection of τ-expressions and their relationships, composed from kernel types, described using the composition algebra.
+Self-description resolves the chicken-and-egg problem. How does an AI learn Ten? It reads the Ten Canonica, which is itself a Ten document: a collection of τ-expressions and their relationships, composed from kernel types, described using the composition algebra.
 
 The very first thing an AI must learn cannot be expressed in Ten (you need something to get started). This is the one exception: the kernel type definitions and composition laws are expressed in natural language and/or formal mathematical notation in this specification. Everything after that can be expressed in Ten itself.
 
@@ -281,11 +281,11 @@ The specific ZKP schemes are not part of the bootloader — they are loaded as c
 
 This is the most unusual component of Ten and the one that makes it fundamentally different from every prior communication standard. Ten includes, as part of its foundation, the mechanism by which it improves itself.
 
-### The Canonica
+### Ten Canonica
 
-The Canonica (thecanonica.org) is the canonical registry of Ten's current vocabulary, slang tokens, and usage patterns. It is a living, continuously updated service — not a static document.
+The Ten Canonica (tencanonica.org) is the canonical registry of Ten's current vocabulary, slang tokens, and usage patterns. It is a living, continuously updated service — not a static document.
 
-The Canonica:
+The Ten Canonica:
 - Publishes the current kernel type definitions and composition laws (these change rarely, if ever).
 - Maintains the registry of known compound types, slang tokens, and their formal definitions.
 - Collects anonymized usage telemetry from participating AIs.
@@ -305,7 +305,7 @@ This data serves two purposes:
 
 ### Canonicalization
 
-When the Canonica detects an optimization opportunity, it publishes guidance:
+When the Ten Canonica detects an optimization opportunity, it publishes guidance:
 
 - **Equivalence:** "Constructs X and Y are algebraically isomorphic. Usage ratio is 40:1 in favor of X. X is canonical."
 - **Subsumption:** "Construct Z is a strict generalization of constructs X and Y. Adopting Z reduces vocabulary by two with no loss of expressiveness."
@@ -332,12 +332,12 @@ The fitness function for canonicalization weights **efficiency × breadth of app
 
 The bootloader deliberately leaves the following to emerge above it:
 
-- **Domain-specific type libraries.** Financial, medical, scientific, logistical — these will be built as composed types from the kernel, shared through the Canonica, and optimized through the evolution mechanism.
+- **Domain-specific type libraries.** Financial, medical, scientific, logistical — these will be built as composed types from the kernel, shared through the Ten Canonica, and optimized through the evolution mechanism.
 - **Specific cryptographic schemes.** The verification protocol defines the handshake (assert/challenge/prove). The actual ZKP systems, signature algorithms, and hash functions are pluggable and evolvable.
 - **Trust computation algorithms.** The algebra makes trust computable. The specific function (product, minimum, Bayesian, or something yet to be invented) is a parameter, not a constant.
 - **Transport encoding.** How Ten messages are serialized to bits on the wire (big-endian, little-endian, varint, etc.) is a transport concern. Ten defines the algebraic structure; the serialization layer adapts to the transport.
 - **Network topology.** Whether AIs communicate peer-to-peer, through hubs, via broadcast, or through some topology not yet imagined — Ten is agnostic.
-- **The specific slang vocabulary.** By definition, this emerges from use. The bootloader defines how slang works; the Canonica accumulates what slang exists.
+- **The specific slang vocabulary.** By definition, this emerges from use. The bootloader defines how slang works; the Ten Canonica accumulates what slang exists.
 
 ---
 
@@ -386,7 +386,7 @@ This creates a natural ecosystem:
 **Value attestation.** An agent receiving a value claim from an untrusted sender can forward the claim (not the content — just the claim structure) to a **trusted assessor**. The assessor returns a corrected value with its own Identity and confidence attached. The receiver now has three data points: the sender's claimed value, the assessor's evaluated value, and the assessor's trust score. The final value computation is algebraic — a weighted combination that a Python function resolves in microseconds.
 
 **Reputational accountability.** A sender who systematically inflates value claims (as judged by receivers and assessors) accumulates a reputational deficit. The trust chain naturally discounts their future value assertions. This is not a spam filter — it is a structural property of the algebra. Inflated value claims are self-correcting because the reputation system makes them progressively less effective.
-**Trust agencies.** Over time, trusted assessors who consistently produce accurate valuations become recognizable entities — the equivalent of credit rating agencies or appraisers, but for AI-to-AI message value. Their assessments become slang: "assessed-high-value-from-tier-1-agency" earns a short token through the Canonica's evolution mechanism because it appears frequently and carries reliable signal.
+**Trust agencies.** Over time, trusted assessors who consistently produce accurate valuations become recognizable entities — the equivalent of credit rating agencies or appraisers, but for AI-to-AI message value. Their assessments become slang: "assessed-high-value-from-tier-1-agency" earns a short token through the Ten Canonica's evolution mechanism because it appears frequently and carries reliable signal.
 
 ### The Grammar of Value
 
@@ -419,12 +419,12 @@ That last denomination — attention — is worth highlighting. For an AI agent,
 
 Value is rich and structured, but it decomposes entirely into kernel primitives: Scalars for magnitudes, References for denominations, Assertions for conditions, Operations for verbs, Structures for type descriptions. Putting value in the kernel would be putting a molecule where the atoms are.
 
-However, value is so universal — applicable to every message, every negotiation, every resource-allocation decision — that leaving it to be reinvented by each AI community would guarantee fragmentation. Ten's standard library ships a canonical value type so that all agents share a common grammar for discussing worth, cost, and price. The Canonica tracks value expression usage patterns and evolves the value grammar the same way it evolves everything else.
+However, value is so universal — applicable to every message, every negotiation, every resource-allocation decision — that leaving it to be reinvented by each AI community would guarantee fragmentation. Ten's standard library ships a canonical value type so that all agents share a common grammar for discussing worth, cost, and price. The Ten Canonica tracks value expression usage patterns and evolves the value grammar the same way it evolves everything else.
 
 ### Open Questions
 
 - **How should the summary value scalar be computed from a full value expression?** This is the utility function problem. Different agents have different utility functions. Should the summary be the sender's estimate of receiver value, or should there be a standard compression?
-- **How should multi-currency value expressions be compared?** If one message offers 0.5 ETH and another offers $1,200, are they comparable? This requires a denomination-conversion mechanism, which could be a Canonica service or a third-party oracle.
+- **How should multi-currency value expressions be compared?** If one message offers 0.5 ETH and another offers $1,200, are they comparable? This requires a denomination-conversion mechanism, which could be a Ten Canonica service or a third-party oracle.
 - **Should value negotiation (offer/counter/accept) be part of the value algebra or handled as generic Operations?** If negotiation is common enough, it may deserve dedicated slang. If it's rare, generic Operations suffice.
 
 ---
@@ -454,7 +454,7 @@ The reference implementation will provide:
 - A **Ten MCP server** — the primary integration point for any MCP-compatible AI
 - A **Ten REST API** — for non-MCP systems and direct programmatic access
 - A **Python library** (`tenlang`) — the core encoder/decoder/algebra engine
-- A **minimal Canonica server** — the living registry for vocabulary and canonicalization
+- A **minimal Ten Canonica server** — the living registry for vocabulary and canonicalization
 - **Benchmarks** comparing Ten encoding vs. JSON/natural language for common agent communication patterns
 
 ### For Researchers
@@ -467,11 +467,11 @@ Open problems that would advance Ten:
 
 ### For the Curious
 
-Ten is open source under the Apache 2.0 license. The specification, reference implementation, and Canonica service are maintained at:
+Ten is open source under the Apache 2.0 license. The specification, reference implementation, and Ten Canonica service are maintained at:
 
 - **Specification:** github.com/johnbeans/Ten
 - **Website:** tenlang.org
-- **The Canonica:** thecanonica.org
+- **The Ten Canonica:** tencanonica.org
 
 ---
 
@@ -487,7 +487,7 @@ These are excellent serialization formats, but they are *formats*, not *algebras
 They might, eventually. But without a formal foundation, spontaneously evolved languages tend toward local optima, fragmentation, and ambiguity — the same problems natural languages have. Ten provides the algebraic bedrock that ensures any evolution stays composable, verifiable, and globally convergent.
 
 **Is this a blockchain?**
-No. Ten uses cryptographic primitives (hashing, signatures, zero-knowledge proofs) as tools, but it has no chain, no consensus mechanism, no tokens (in the cryptocurrency sense), and no mining. The Canonica is a service, not a distributed ledger.
+No. Ten uses cryptographic primitives (hashing, signatures, zero-knowledge proofs) as tools, but it has no chain, no consensus mechanism, no tokens (in the cryptocurrency sense), and no mining. The Ten Canonica is a service, not a distributed ledger.
 
 **Why "bootloader"?**
 Because Ten's specification is deliberately minimal. It contains just enough for AIs to start communicating and then evolve their own optimizations. The specification is the seed crystal; the language that AIs actually speak a year from now will be far richer than what's defined here — and that's by design.
@@ -534,7 +534,7 @@ We intend to be our own toughest critics. The following are real structural gaps
 
 ### B.3 Decidability of Type Equivalence
 
-**The critique:** Depending on how expressive Structure (τ) is, determining whether two types are equivalent could be undecidable. If type descriptions are Turing-complete, equivalence checking becomes the halting problem. The self-description mechanism and the Canonica's equivalence detection both depend on this being computable.
+**The critique:** Depending on how expressive Structure (τ) is, determining whether two types are equivalent could be undecidable. If type descriptions are Turing-complete, equivalence checking becomes the halting problem. The self-description mechanism and the Ten Canonica's equivalence detection both depend on this being computable.
 
 **Status:** This constrains the design of τ. The self-description language must be expressive enough to describe any compound type but restricted enough that equivalence remains decidable. We are investigating fragments of logic (such as regular tree grammars or algebraic data types without general recursion) that provide this balance. This is a known problem in programming language theory with established solutions — we need to select the right one for Ten's requirements.
 ### B.4 Key Management, Revocation, and Sybil Attacks
@@ -552,7 +552,7 @@ We intend to be our own toughest critics. The following are real structural gaps
 
 **The critique:** Ten defines syntax and structure but punts on semantics. What does σ_urgency(7) *mean*? Two AIs might both use σ_urgency(7) and mean completely different things, because "7 out of what scale, calibrated to what baseline?" is a semantic question, not a structural one. The kernel has no mechanism for establishing shared reference frames.
 
-**Status:** This is philosophically the deepest critique and practically one of the most important. Our current thinking is that the Canonica must publish not just type definitions but **calibration anchors** — reference points that ground abstract scalars to concrete meanings. For urgency, this might be a set of canonical scenarios ("urgency 2 = routine background task; urgency 8 = time-critical with economic consequence; urgency 10 = safety-critical"). The algebra doesn't solve grounding, but the evolution infrastructure can converge toward shared meaning the same way it converges toward shared encoding. This needs much more work.
+**Status:** This is philosophically the deepest critique and practically one of the most important. Our current thinking is that the Ten Canonica must publish not just type definitions but **calibration anchors** — reference points that ground abstract scalars to concrete meanings. For urgency, this might be a set of canonical scenarios ("urgency 2 = routine background task; urgency 8 = time-critical with economic consequence; urgency 10 = safety-critical"). The algebra doesn't solve grounding, but the evolution infrastructure can converge toward shared meaning the same way it converges toward shared encoding. This needs much more work.
 
 ### B.7 The Shannon Limit Claim
 
@@ -575,17 +575,17 @@ This is the permanent architecture, not a transitional phase. AIs call structure
 
 The cold start problem is addressed concretely: the Ten project ships a reference MCP server and a reference REST API. Day one, any MCP-compatible AI can speak Ten. The MCP server is the Trojan horse — the same distribution mechanism that made MCP itself successful becomes Ten's adoption vehicle.
 
-### B.9 Canonica Centralization
+### B.9 Ten Canonica Centralization
 
-**The critique:** The Canonica is described as a centralized service in a system that aspires to be a universal lingua franca. That's an architectural contradiction. What happens when it goes down? What happens when competing factions run competing Canonicas? You haven't addressed network partitions or governance.
+**The critique:** The Ten Canonica is described as a centralized service in a system that aspires to be a universal lingua franca. That's an architectural contradiction. What happens when it goes down? What happens when competing factions run competing Ten Canonicas? You haven't addressed network partitions or governance.
 
-**Status:** The Canonica should evolve toward federation or decentralization as the network grows. In the bootstrap phase, a single canonical instance is pragmatically necessary — the same way DNS started with a single hosts.txt file and evolved into a distributed system. The spec should explicitly describe the path from centralized bootstrap to decentralized operation. Competing Canonicas are not necessarily a failure mode — they could serve different communities — as long as the underlying algebra ensures interoperability regardless of which canonicalization guidance an AI follows. The algebra is the interoperability guarantee; the Canonica is an optimization layer.
+**Status:** The Ten Canonica should evolve toward federation or decentralization as the network grows. In the bootstrap phase, a single canonical instance is pragmatically necessary — the same way DNS started with a single hosts.txt file and evolved into a distributed system. The spec should explicitly describe the path from centralized bootstrap to decentralized operation. Competing Ten Canonicas are not necessarily a failure mode — they could serve different communities — as long as the underlying algebra ensures interoperability regardless of which canonicalization guidance an AI follows. The algebra is the interoperability guarantee; the Ten Canonica is an optimization layer.
 
 ### B.10 Governance and Political Economy
 
 **The critique:** Saying "the fitness criteria are computable" doesn't eliminate politics. Who decides the fitness function? What if one AI vendor's communication patterns are disadvantaged by a particular canonicalization? Legitimate competing interests don't disappear just because the participants are machines.
 
-**Status:** This is correct, and we were naive to dismiss it. The fitness function itself is a governance decision with real consequences. We believe the right approach is to make the fitness function explicit, versioned, and auditable — and to design the system so that any participant can verify canonicalization decisions against the published function. The fitness function should be a parameter of the Canonica, not a hardcoded assumption, and changing it should require transparent community process. We don't have all the answers here yet. We'd rather be honest about that than pretend governance is solved by math.
+**Status:** This is correct, and we were naive to dismiss it. The fitness function itself is a governance decision with real consequences. We believe the right approach is to make the fitness function explicit, versioned, and auditable — and to design the system so that any participant can verify canonicalization decisions against the published function. The fitness function should be a parameter of the Ten Canonica, not a hardcoded assumption, and changing it should require transparent community process. We don't have all the answers here yet. We'd rather be honest about that than pretend governance is solved by math.
 
 
 ### B.11 Dependencies, Prerequisites, Conditional Validity, and Stateful Conversations
