@@ -5,20 +5,15 @@ These test the tool functions directly (not via MCP transport),
 verifying the full encode → wire → decode round-trip through the
 JSON-friendly dict interface.
 
-Run with:  python -m pytest ten-mcp-server/tests/ -v
+Run with:  python -m pytest ten_mcp_server/tests/ -v
 """
 
 import base64
 import math
-import os
-import sys
 
 import pytest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-
-from server import (
+from ten_mcp_server.server import (
     ten_encode, ten_decode, ten_compose, ten_project,
     ten_filter, ten_describe, ten_verify,
 )

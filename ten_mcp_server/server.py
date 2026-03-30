@@ -13,11 +13,6 @@ Usage:
 
 import base64
 import json
-import sys
-import os
-
-# Ensure tenlang is importable from the monorepo
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from mcp.server.fastmcp import FastMCP
 

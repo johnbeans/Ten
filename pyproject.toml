@@ -7,7 +7,7 @@ name = "tenlang"
 version = "0.1.0"
 description = "Python bindings for the Ten formal algebra"
 readme = "README.md"
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
 requires-python = ">=3.9"
 authors = [
     {name = "Jolly Logic, LLC", email = "john@jollylogic.com"},

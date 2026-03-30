@@ -55,10 +55,13 @@ The core deliverable is a **Ten MCP server** — the primary adoption vehicle. B
 - [x] MCP tool: `ten.verify` — check assertions and trust chains
 - [ ] Publish to MCP registry for one-click installation
 
-### Ten REST API
-- [ ] HTTP endpoints mirroring MCP tools for non-MCP systems
+### Ten REST API — COMPLETE, 35/35 tests pass
+- [x] HTTP endpoints mirroring MCP tools for non-MCP systems
+      FastAPI server with 7 POST endpoints (/v1/encode, /v1/decode,
+      /v1/compose, /v1/project, /v1/filter, /v1/describe, /v1/verify)
+      plus /health. Auto-generated OpenAPI docs at /docs and /redoc.
 - [ ] WebSocket support for streaming Ten message exchanges
-- [ ] API documentation and interactive playground
+- [x] API documentation and interactive playground (auto-generated via FastAPI/Swagger)
 
 ## Phase 1.5: Industry Validation — THE CRITICAL GATE
 
