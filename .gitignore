@@ -21,5 +21,8 @@ dist/
 build/
 .pytest_cache/
 
+# MCP registry auth tokens
+.mcpregistry_*
+
 # macOS
 .DS_Store
