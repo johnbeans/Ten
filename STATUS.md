@@ -1,5 +1,5 @@
 # Ten Implementation Status
-# Last updated: 2026-03-29 (REST API + MCP registry packaging added)
+# Last updated: 2026-03-29 (Phase 1 complete — published to PyPI + MCP registry)
 # Read this FIRST in any new chat to avoid re-reading 93KB of docs.
 
 ## Strategic Priority
@@ -20,9 +20,10 @@ encode/decode — it's struct packing, array comparisons, tree walks.
 
 ## Architecture (decided)
 - **libten** (C) — Core algebra library. Arena-allocated, zero deps.
-- **Python bindings** — Thin ctypes/cffi wrapper around libten.
-- **ten-mcp-server** (Python) — MCP tool exposure. No AI inference.
-- **Ten Canonica** (Python + PostgreSQL) — Living token registry.
+- **tenlang** (Python) — Thin ctypes wrapper around libten.
+- **ten_mcp_server** (Python) — MCP tool exposure. No AI inference.
+- **ten_rest_api** (Python) — HTTP endpoints mirroring MCP tools.
+- **Ten Canonica** (Python + PostgreSQL) — Living token registry (Phase 2).
 
 ## Repo: github.com/johnbeans/Ten
 Location on disk: /Users/johnbeans/Ten
@@ -111,19 +112,30 @@ ten_rest_api/
     └── test_api.py        — 35 tests using FastAPI TestClient
 ```
 
+### Published Packages
+- **tenlang** on PyPI — `pip install tenlang` → https://pypi.org/project/tenlang/
+- **ten-mcp-server** on PyPI — `pip install ten-mcp-server` → https://pypi.org/project/ten-mcp-server/
+- **io.github.johnbeans/ten** on MCP Registry — one-click install for MCP clients
+
+### Phase 1 Status: COMPLETE
+All four layers are built, tested, published, and pushed to github.com/johnbeans/Ten:
+- libten: 69/69 C tests
+- tenlang: 53/53 Python tests
+- ten_mcp_server: 31/31 MCP tool tests
+- ten_rest_api: 35/35 REST endpoint tests
+- **Total: 188 tests, all passing**
+
 ### NOT YET IMPLEMENTED
-1. **MCP registry publication** — ten-mcp-server is packaged with server.json
-   and pyproject.toml ready for PyPI + mcp-publisher. Needs `pip install twine`
-   and `brew install mcp-publisher` on your Mac to publish.
+1. **WebSocket support** — Streaming Ten message exchanges over WS.
 
-2. **WebSocket support** — Streaming Ten message exchanges over WS.
-
-3. **Ten Canonica** — Token registry service.
+2. **Ten Canonica** (Phase 2) — Token registry service.
    Blocked on: real usage telemetry from MCP server deployment.
 
-4. **Validation (Phase 1.5)** — Industry stress tests. The full stack
-   (libten → tenlang → ten-mcp-server → ten-rest-api) is ready. Next step
-   is building domain libraries and measuring against JSON + LLM baselines.
+3. **Validation (Phase 1.5)** — THE CRITICAL GATE. Industry stress tests.
+   The full stack (libten → tenlang → ten_mcp_server → ten_rest_api)
+   is ready. Next step is building domain libraries (derivatives, supply
+   chain, clinical trial) and measuring against JSON + LLM baselines.
+   This determines whether Ten justifies its existence with real data.
 
 ## Key Design Decisions (already made)
 - Messages carry metadata, not content. Payloads are SHA-256 References.

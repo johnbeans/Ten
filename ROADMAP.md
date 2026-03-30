@@ -53,7 +53,8 @@ The core deliverable is a **Ten MCP server** — the primary adoption vehicle. B
 - [x] MCP tool: `ten.filter` — evaluate a Ten expression against filter criteria
 - [x] MCP tool: `ten.describe` — return the τ-structure of an expression
 - [x] MCP tool: `ten.verify` — check assertions and trust chains
-- [ ] Publish to MCP registry for one-click installation
+- [x] Publish to MCP registry for one-click installation
+      Published as io.github.johnbeans/ten. Also on PyPI: `pip install ten-mcp-server`
 
 ### Ten REST API — COMPLETE, 35/35 tests pass
 - [x] HTTP endpoints mirroring MCP tools for non-MCP systems
