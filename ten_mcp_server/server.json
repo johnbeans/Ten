@@ -1,44 +1,20 @@
 {
-  "$schema": "https://registry.modelcontextprotocol.io/schemas/server.json",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.johnbeans/ten",
-  "description": "Ten formal algebra for machine intelligence communication — encode, decode, compose, filter, and verify structured messages without LLM inference",
+  "description": "Ten formal algebra for machine intelligence — encode, decode, compose, and verify",
+  "repository": {
+    "url": "https://github.com/johnbeans/Ten",
+    "source": "github"
+  },
   "version": "0.1.0",
-  "repository": "https://github.com/johnbeans/Ten",
   "packages": [
     {
-      "registry_name": "pypi",
-      "name": "ten-mcp-server",
-      "version": "0.1.0"
-    }
-  ],
-  "tools": [
-    {
-      "name": "ten_encode",
-      "description": "Build a Ten expression from a structured dict and return its binary wire format (base64)"
-    },
-    {
-      "name": "ten_decode",
-      "description": "Deserialize Ten wire bytes (base64 or hex) back into a structured expression dict"
-    },
-    {
-      "name": "ten_compose",
-      "description": "Algebraically combine two Ten expressions using sequence, product, nesting, union, or intersection"
-    },
-    {
-      "name": "ten_project",
-      "description": "Extract a subset of facet dimensions from a Ten expression"
-    },
-    {
-      "name": "ten_filter",
-      "description": "Evaluate Ten expressions against facet-based filter criteria (>=, <=, ==, !=)"
-    },
-    {
-      "name": "ten_describe",
-      "description": "Return a human-readable structural description of a Ten expression"
-    },
-    {
-      "name": "ten_verify",
-      "description": "Validate a Ten expression tree for structural integrity and check assertion metadata"
+      "registryType": "pypi",
+      "identifier": "ten-mcp-server",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      }
     }
   ]
 }

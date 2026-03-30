@@ -22,9 +22,14 @@ Repository = "https://github.com/johnbeans/Ten"
 [project.scripts]
 ten-mcp-server = "ten_mcp_server.server:main"
 
-[tool.setuptools.packages.find]
-where = [".."]
-include = ["ten_mcp_server*"]
+[tool.setuptools]
+packages = ["ten_mcp_server", "ten_mcp_server.tests"]
+
+[tool.setuptools.package-dir]
+"ten_mcp_server" = "."
+
+[tool.setuptools.package-data]
+ten_mcp_server = ["server.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
